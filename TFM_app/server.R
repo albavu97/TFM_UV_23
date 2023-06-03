@@ -35,6 +35,20 @@ server <- function(input, output, session) {
       choices  = reactives$mydata$Name,
       selected = NULL
     )
+    updateSelectizeInput(
+      session,
+      inputId = 'PosSelect',
+      label = 'Select the position',
+      choices  = reactives$mydata$Pos,
+      selected = NULL
+    )
+    updateSelectInput(
+      session,
+      inputId = 'cpSelect',
+      label = 'Select the cp',
+      choices  = c("",reactives$mydata$Cp),
+      selected = NULL
+    )
     
   })
   
@@ -43,8 +57,14 @@ server <- function(input, output, session) {
     if (input$myselectinput != "") {
       filtered <- subset(reactives$mydata, Color %in% input$myselectinput)
     }
+    if (input$cpSelect != "") {
+      filtered <- subset(reactives$mydata, Cp > input$cpSelect)
+    }
     if (!is.null(input$NameSelect)) {
       filtered <- subset(reactives$mydata, Name %in% input$NameSelect)
+    }
+    if (!is.null(input$PosSelect)) {
+      filtered <- subset(reactives$mydata, Pos %in% input$PosSelect)
     }
     filtered
   })

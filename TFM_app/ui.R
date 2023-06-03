@@ -52,24 +52,31 @@ ui <- dashboardPage(
       tabName = "dashboard",
       fluidRow(box(
         title = "Title 1",
-        width = 3,
+        width = 2,
         solidHeader = TRUE,
         status = "primary",
         selectInput('myselectinput','Select the first var', "")
       ),
       box(
         title = "Title 2",
-        width = 3,
+        width = 2,
+        solidHeader = TRUE,
+        status = "primary",
+        selectizeInput("PosSelect", "Select position", "",selected = NULL, multiple = TRUE),
+      ),
+      box(
+        title = "Title 2",
+        width = 2,
         solidHeader = TRUE,
         status = "primary",
         selectizeInput("NameSelect", "Cut", "",selected = NULL, multiple = TRUE),
       ),
       box(
         title = "Title 3",
-        width = 3,
+        width = 2,
         solidHeader = TRUE,
         status = "primary",
-        selectInput('myselectinput','Select the first var', "")
+        selectInput('cpSelect','Select the cp', "")
       ),
         box(
           title = p(
@@ -82,10 +89,11 @@ ui <- dashboardPage(
               title = "Update"
             )
           ),
-          width = 3,
+          width = 2,
           solidHeader = TRUE,
           status = "warning",
-          uiOutput("boxContentUI2")
+          uiOutput("boxContentUI2"),
+          fileInputOnlyButton("file", buttonLabel = "Browse", width = 30)
         ),
         box(
           status = "warning",
@@ -119,8 +127,7 @@ ui <- dashboardPage(
           title = "Title 1",
           width = 4,
           solidHeader = TRUE,
-          status = "warning",
-          fileInputOnlyButton("file", buttonLabel = "Browse", width = 30)
+          status = "warning"
         )
       ),
       
