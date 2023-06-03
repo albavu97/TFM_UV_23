@@ -19,16 +19,10 @@ fileInputOnlyButton <- function(..., label = "") {
       ".csv"
     )
   )
-  # Cut away the label
   temp$children[[1]] <- NULL
-  # Cut away the input field (after label is cut, this is position 1 now)
   temp$children[[1]]$children[[2]] <- NULL
-  # Remove input group classes (makes button flat on one side)
-  # temp$children[[1]]$attribs$class <- NULL
-  # temp$children[[1]]$children[[1]]$attribs$class <- NULL
   temp
 }
-
 
 ui <- dashboardPage(
   skin = "yellow",
@@ -38,11 +32,12 @@ ui <- dashboardPage(
     width = 90
   )),
   dashboardSidebar(sidebarMenu(
-    menuItem(
-      "Dashboard",
-      tabName = "dashboard",
-      icon = icon("dashboard")
-    )
+    menuItem("Dashboard",
+             tabName = "dashboard",
+             icon = icon("table")),
+    menuItem("Cell",
+             tabName = "cell",
+             icon = icon("flask"))
   )),
   dashboardBody(tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
@@ -50,106 +45,85 @@ ui <- dashboardPage(
   tabItems(
     tabItem(
       tabName = "dashboard",
-      fluidRow(box(
-        title = "Title 1",
-        width = 2,
-        solidHeader = TRUE,
-        status = "primary",
-        selectInput('myselectinput','Select the first var', "")
-      ),
-      box(
-        title = "Title 2",
-        width = 2,
-        solidHeader = TRUE,
-        status = "primary",
-        selectizeInput("PosSelect", "Select position", "",selected = NULL, multiple = TRUE),
-      ),
-      box(
-        title = "Title 2",
-        width = 2,
-        solidHeader = TRUE,
-        status = "primary",
-        selectizeInput("NameSelect", "Cut", "",selected = NULL, multiple = TRUE),
-      ),
-      box(
-        title = "Title 3",
-        width = 2,
-        solidHeader = TRUE,
-        status = "primary",
-        selectInput('cpSelect','Select the cp', "")
-      ),
+      fluidRow(
+        tags$style(
+          "
+             .btn-file {
+             background-color:black;
+             border-color: white;
+             color:white;
+             display: inline-block;
+             font-size: 16px;
+             font-weight: bold;
+             vertical-align: middle;
+             }
+
+             .progress-bar {
+             background-color:#fff8d4;
+             width: 100px;
+             color:black;
+             }
+
+             "
+        ),
         box(
-          title = p(
-            "Title 1",
-            actionButton(
-              "titleBtId",
-              "",
-              icon = icon("refresh"),
-              class = "btn-xs",
-              title = "Update"
-            )
-          ),
-          width = 2,
+          title = "Upload file",
+          width = 1,
           solidHeader = TRUE,
           status = "warning",
           uiOutput("boxContentUI2"),
-          fileInputOnlyButton("file", buttonLabel = "Browse", width = 30)
+          fileInputOnlyButton("file", buttonLabel = "Browse")
+        ),
+        box(
+          title = "Upload file",
+          width = 1,
+          solidHeader = TRUE,
+          status = "warning"
+        ),
+        box(
+          title = "Cell position",
+          width = 2,
+          solidHeader = TRUE,
+          status = "info",
+          selectizeInput("PosSelect",
+                         "",
+                         "",
+                         selected = NULL,
+                         multiple = TRUE),
+        ),
+        box(
+          title = "Name",
+          width = 2,
+          solidHeader = TRUE,
+          status = "danger",
+          selectizeInput("NameSelect",
+                         "",
+                         "",
+                         selected = NULL,
+                         multiple = TRUE),
+        ),
+        box(
+          title = "Cp",
+          width = 2,
+          solidHeader = TRUE,
+          status = "primary",
+          selectInput('cpSelect', '', "")
+        ),
+        box(
+          title = "Color",
+          width = 2,
+          solidHeader = TRUE,
+          status = "warning",
+          selectInput('colorInput', '', "")
         ),
         box(
           status = "warning",
-          height = 600,
           width = 12,
           style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
           DTOutput('contents', width = "98%", height = "98%")
         )
       ),
-      
-      fluidRow(
-        box(
-          title = "Title 1",
-          width = 4,
-          solidHeader = TRUE,
-          status = "primary",
-          "Box content"
-        ),
-        box(
-          title = "Title 2",
-          width = 4,
-          solidHeader = TRUE,
-          span(
-            `data-toggle` = "tooltip",
-            `data-placement` = "right",
-            title = "Please upload a file.  Supported file types are:  .txt, .csv and .xls",
-            icon("info-circle")
-          )
-        ),
-        box(
-          title = "Title 1",
-          width = 4,
-          solidHeader = TRUE,
-          status = "warning"
-        )
-      ),
-      
-      fluidRow(
-        box(
-          width = 4,
-          background = "black",
-          "A box with a solid black background"
-        ),
-        box(
-          title = "Title 5",
-          width = 4,
-          background = "light-blue",
-          "A box with a solid light-blue background"
-        ),
-        box(
-          title = "Title 6",
-          width = 4,
-          background = "maroon",
-          "A box with a solid maroon background"
-        )
-      )
-    )
+    ),
+    tabItem(tabName = "cell")
   ))
 )

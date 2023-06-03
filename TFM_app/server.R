@@ -23,9 +23,9 @@ server <- function(input, output, session) {
     #Update select input
     updateSelectInput(
       session,
-      inputId = 'myselectinput',
+      inputId = 'colorInput',
       label = 'Select the first var',
-      choices  = c("",reactives$mydata$Color),
+      choices  = c("", reactives$mydata$Color),
       selected = NULL
     )
     updateSelectizeInput(
@@ -46,7 +46,7 @@ server <- function(input, output, session) {
       session,
       inputId = 'cpSelect',
       label = 'Select the cp',
-      choices  = c("",reactives$mydata$Cp),
+      choices  = c("", reactives$mydata$Cp),
       selected = NULL
     )
     
@@ -54,8 +54,8 @@ server <- function(input, output, session) {
   
   df2 <- reactive({
     filtered <- reactives$mydata
-    if (input$myselectinput != "") {
-      filtered <- subset(reactives$mydata, Color %in% input$myselectinput)
+    if (input$colorInput != "") {
+      filtered <- subset(reactives$mydata, Color %in% input$colorInput)
     }
     if (input$cpSelect != "") {
       filtered <- subset(reactives$mydata, Cp > input$cpSelect)
@@ -92,6 +92,6 @@ server <- function(input, output, session) {
   })
   output$contents <- renderDT({
     datatable(df2(),
-              options = list(pageLength = 10),)
+              options = list(pageLength = 10), )
   })
 }
