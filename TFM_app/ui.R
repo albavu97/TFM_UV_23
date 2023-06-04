@@ -78,7 +78,11 @@ ui <- dashboardPage(
           title = "Upload file",
           width = 1,
           solidHeader = TRUE,
-          status = "warning"
+          status = "warning",
+          fileInput("csvs",
+                    label="Upload CSVs here",
+                    multiple = TRUE),
+          textOutput("count")
         ),
         box(
           title = "Cell position",
@@ -121,9 +125,21 @@ ui <- dashboardPage(
           width = 12,
           style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
           DTOutput('contents', width = "98%", height = "98%")
+        ),
+        box(
+          status = "warning",
+          width = 12,
+          style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+          DTOutput('contents2', width = "98%", height = "98%")
         )
       ),
     ),
-    tabItem(tabName = "cell")
+    tabItem(tabName = "cell",
+            box(
+              status = "warning",
+              width = 12,
+              style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+              DTOutput('contents3', width = "98%", height = "98%")
+            ))
   ))
 )

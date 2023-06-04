@@ -1,9 +1,40 @@
 library(shiny)
 library(DT)
+library(data.table)
 
 server <- function(input, output, session) {
   output$menuitem <- renderMenu({
     menuItem("Menu item", icon = icon("calendar"))
+  })
+  
+  observeEvent(input$csvs, {
+  csvs <- reactive({
+    # list( rbindlist(lapply(input$csvs$datapath, fread),
+    #                           use.names = TRUE, fill = TRUE))
+    tmp <- lapply(input$csvs$datapath, fread)
+    names(tmp) <- input$csvs$name
+    tmp
+    
+  })
+  
+  output$contents2 <- renderDT({
+    datatable(csvs()[[2]],
+              options = list(pageLength = 5,
+                             columnDefs = list(list(className = 'dt-center', targets = 5)),
+                             lengthMenu = c(5, 10, 15, 20),
+                             initComplete = JS(
+                               "function(settings, json) {",
+                               "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+                               "}")))
+  })
+  output$contents3 <- renderDT({
+    datatable(csvs()[[1]],
+              options = list(pageLength = 10))
+  })
+  output$contents <- renderDT({
+    datatable(csvs()[[3]],
+              options = list(pageLength = 10))
+  })
   })
   
   #Reactive to store loaded data
@@ -70,10 +101,9 @@ server <- function(input, output, session) {
   })
   
   df <- reactive({
-    req(input$selection)
     data <-
       read.csv(
-        input$selection$datapath,
+        mycsvs()[[2]],
         sep = '\t',
         dec = ',',
         header = TRUE,
@@ -89,9 +119,5 @@ server <- function(input, output, session) {
         "STANDARD",
         "STATUS")
     data
-  })
-  output$contents <- renderDT({
-    datatable(df2(),
-              options = list(pageLength = 10), )
   })
 }
