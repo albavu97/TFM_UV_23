@@ -59,7 +59,7 @@ ui <- dashboardPage(
             fluidRow(div(style = "margin-rigth: 20%;margin-left: 30%;width:30%;height:200px;background-color: transparent;text-align:center",
               box(
                 img(
-                  src = 'TS.png',
+                  src = 'baby_yoda.png',
                   align = "center",
                   style = paste0("max-width: 100%; height: ", my_height, ";")
                 ),
@@ -229,10 +229,50 @@ ui <- dashboardPage(
     ),
     tabItem(
       tabName = "cell",
-      box(
-        status = "warning",
-        width = 12
-      )
+      tabBox(
+        width = 12,
+        tabPanel(title= textOutput("title4"),
+      fluidPage(
+        fluidRow(
+          column(width = 3,
+                 colourInput("colNum1", label = "Choose colour range for Ct values",  "green"),
+                 colourInput("colNum2", label = NULL, "magenta"),
+                 radioButtons("var2plot", label = "Select value to plot", choices = c("Cp" = "Cp", "Concentration" = "Conc")),
+          ),#End column inputs
+          column(width = 8,
+                 #img(src = "images/96-well plot 1.png", width = "99%"),
+                 #img(src = "images/96-well plot 2.png", width = "99%")
+                 plotOutput("plot1"),
+          )
+          ))),
+      tabPanel(title= textOutput("title5"),
+               fluidPage(
+                 fluidRow(
+                   column(width = 3,
+                          colourInput("colNum3", label = "Choose colour range for Ct values",  "green"),
+                          colourInput("colNum4", label = NULL, "magenta"),
+                          radioButtons("var3plot", label = "Select value to plot", choices = c("Cp" = "Cp", "Concentration" = "Conc")),
+                   ),#End column inputs
+                   column(width = 8,
+                          #img(src = "images/96-well plot 1.png", width = "99%"),
+                          #img(src = "images/96-well plot 2.png", width = "99%")
+                          plotOutput("plot2"),
+                   )
+                 ))),
+      tabPanel(title= textOutput("title6"),
+               fluidPage(
+                 fluidRow(
+                   column(width = 3,
+                          colourInput("colNum5", label = "Choose colour range for Ct values",  "green"),
+                          colourInput("colNum6", label = NULL, "magenta"),
+                          radioButtons("var4plot", label = "Select value to plot", choices = c("Cp" = "Cp", "Concentration" = "Conc")),
+                   ),#End column inputs
+                   column(width = 8,
+                          #img(src = "images/96-well plot 1.png", width = "99%"),
+                          #img(src = "images/96-well plot 2.png", width = "99%")
+                          plotOutput("plot3"),
+                   )
+                 ))))
     )
   )
 ))
