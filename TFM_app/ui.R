@@ -8,6 +8,8 @@ library(htmltools)
 library(DT)
 library(shinyalert)
 library(dipsaus)
+library(shinyjs)
+library(colourpicker)
 
 my_height = "auto"
 

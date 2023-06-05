@@ -44,7 +44,7 @@ server <- function(input, output, session) {
       updateSelectInput(
         session,
         inputId = paste0('colorInput',number),
-        label = 'Select the first var',
+        label = 'Select the color',
         choices  = c("", csvs()[[number]]$Color),
         selected = NULL
       )
@@ -70,19 +70,54 @@ server <- function(input, output, session) {
         selected = NULL
       )}
     
-    df2 <- reactive({
-      filtered <- reactives$mydata
-      if (input$colorInput != "") {
-        filtered <- subset(reactives$mydata, Color %in% input$colorInput)
+    #Update first table
+    datafile1 <- reactive({
+      filtered <- csvs()[[1]]
+      if (input$colorInput1 != "") {
+         filtered <- subset(csvs()[[1]], Color %in% input$colorInput1)
+       }
+      if (input$cpSelect1 != "") {
+         filtered <- subset(csvs()[[1]], Cp > input$cpSelect1)
+       }
+      if (!is.null(input$NameSelect1)) {
+         filtered <- subset(csvs()[[1]], Name %in% input$NameSelect1)
+       }
+      if (!is.null(input$PosSelect1)) {
+         filtered <- subset(csvs()[[1]], Pos %in% input$PosSelect1)
+       }
+      filtered
+    })
+    
+    datafile2 <- reactive({
+      filtered <- csvs()[[2]]
+      if (input$colorInput2 != "") {
+        filtered <- subset(csvs()[[2]], Color %in% input$colorInput2)
       }
-      if (input$cpSelect != "") {
-        filtered <- subset(reactives$mydata, Cp > input$cpSelect)
+      if (input$cpSelect2 != "") {
+        filtered <- subset(csvs()[[2]], Cp > input$cpSelect2)
       }
-      if (!is.null(input$NameSelect)) {
-        filtered <- subset(reactives$mydata, Name %in% input$NameSelect)
+      if (!is.null(input$NameSelect2)) {
+        filtered <- subset(csvs()[[2]], Name %in% input$NameSelect2)
       }
-      if (!is.null(input$PosSelect)) {
-        filtered <- subset(reactives$mydata, Pos %in% input$PosSelect)
+      if (!is.null(input$PosSelect2)) {
+        filtered <- subset(csvs()[[2]], Pos %in% input$PosSelect2)
+      }
+      filtered
+    })
+    
+    datafile3 <- reactive({
+      filtered <- csvs()[[3]]
+      if (input$colorInput3 != "") {
+        filtered <- subset(csvs()[[3]], Color %in% input$colorInput3)
+      }
+      if (input$cpSelect3 != "") {
+        filtered <- subset(csvs()[[3]], Cp > input$cpSelect3)
+      }
+      if (!is.null(input$NameSelect3)) {
+        filtered <- subset(csvs()[[3]], Name %in% input$NameSelect3)
+      }
+      if (!is.null(input$PosSelect3)) {
+        filtered <- subset(csvs()[[3]], Pos %in% input$PosSelect3)
       }
       filtered
     })
@@ -93,7 +128,7 @@ server <- function(input, output, session) {
       titleUpdate3()
     output$contents2 <- renderDT({
       datatable(
-        csvs()[[2]],
+        datafile2(),
         options = list(
           pageLength = 10,
           columnDefs = list(list(
@@ -110,7 +145,7 @@ server <- function(input, output, session) {
     })
     output$contents3 <- renderDT({
       datatable(
-        csvs()[[3]],
+        datafile3(),
         options = list(
           pageLength = 10,
           columnDefs = list(list(
@@ -127,7 +162,7 @@ server <- function(input, output, session) {
     })
     output$contents <- renderDT({
       datatable(
-        csvs()[[1]],
+        datafile1(),
         options = list(
           pageLength = 10,
           columnDefs = list(list(
@@ -150,7 +185,7 @@ server <- function(input, output, session) {
       titleUpdate2()
       output$contents2 <- renderDT({
         datatable(
-          csvs()[[2]],
+          datafile2(),
           options = list(
             pageLength = 10,
             columnDefs = list(list(
@@ -167,7 +202,7 @@ server <- function(input, output, session) {
       })
       output$contents <- renderDT({
         datatable(
-          csvs()[[1]],
+          datafile1(),
           options = list(
             pageLength = 10,
             columnDefs = list(list(
@@ -188,7 +223,7 @@ server <- function(input, output, session) {
         titleUpdate1()
         output$contents <- renderDT({
           datatable(
-            csvs()[[1]],
+            datafile1(),
             options = list(
               pageLength = 10,
               columnDefs = list(list(
