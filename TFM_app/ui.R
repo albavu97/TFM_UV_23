@@ -10,6 +10,7 @@ library(shinyalert)
 library(dipsaus)
 library(shinyjs)
 library(colourpicker)
+library(shinyFiles)
 
 my_height = "auto"
 
@@ -70,6 +71,9 @@ ui <- dashboardPage(
                   fileInputOnlyButton("csvs", label = "Upload files"),
                   tags$style(".shiny-file-input-progress {display: none}")
                 ),
+                br(),
+                shinyDirButton("dir", "Input directory", "Upload"),
+                verbatimTextOutput("dir", placeholder = TRUE),  
                 br(),
                 div(style = "height:40px;background-color: transparent;text-align:center",
                        actionButtonStyled("reset","Reset input",icon = icon("house"),width="110px",type = "info")),

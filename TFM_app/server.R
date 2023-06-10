@@ -9,13 +9,40 @@ server <- function(input, output, session) {
     menuItem("Menu item", icon = icon("calendar"))
   })
   
+  #Elegir el directorio donde queremos buscar
+  shinyDirChoose(
+    input,
+    'dir',
+    roots = c(home = '~'),
+    filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw")
+  )
+  
+  global <- reactiveValues(datapath = getwd())
+  
+  dir <- reactive(input$dir)
+  
+  output$dir <- renderText({
+    global$datapath
+  })
+  
+  observeEvent(ignoreNULL = TRUE,
+               eventExpr = {
+                 input$dir
+               },
+               handlerExpr = {
+                 if (!"path" %in% names(dir())) return()
+                 home <- normalizePath("~")
+                 global$datapath <-
+                   file.path(home, paste(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+               })
+  
   
   observeEvent(input$csvs, {
     csvs <- reactive({
       # list( rbindlist(lapply(input$csvs$datapath, fread),
       #                           use.names = TRUE, fill = TRUE))
       tmp <- lapply(input$csvs$datapath, fread)
-      names(tmp) <- input$csvs$name
+      names(tmp) <- str_extract(input$csvs$name,'\\d+')
       tmp
       
     })
