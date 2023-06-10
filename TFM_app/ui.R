@@ -12,7 +12,7 @@ library(shinyjs)
 library(colourpicker)
 library(shinyFiles)
 
-my_height = "auto"
+my_height = "100px"
 
 fileInputOnlyButton <- function(..., label = "") {
   temp <- fileInput(
@@ -58,36 +58,56 @@ ui <- dashboardPage(
     tabItem(tabName = "home",
             fluidRow(column(
               12, div(style = "height:200px;background-color: transparent;")
-            ), ),
-            fluidRow(div(style = "margin-rigth: 20%;margin-left: 30%;width:30%;height:200px;background-color: transparent;text-align:center",
-              box(
-                img(
-                  src = 'baby_yoda.png',
-                  align = "center",
-                  style = paste0("max-width: 100%; height: ", my_height, ";")
-                ),
-                div(style = "height:10px;background-color: transparent;"),
-                div(style = "height:40px;background-color: transparent;text-align:center",
-                  fileInputOnlyButton("csvs", label = "Upload files"),
-                  tags$style(".shiny-file-input-progress {display: none}")
-                ),
-                br(),
-                shinyDirButton("dir", "Input directory", "Upload"),
-                verbatimTextOutput("dir", placeholder = TRUE),  
-                br(),
-                div(style = "height:40px;background-color: transparent;text-align:center",
-                       actionButtonStyled("reset","Reset input",icon = icon("house"),width="110px",type = "info")),
-                div(style = "height:10px;background-color: transparent;"),
-                width = 12,
-                solidHeader = TRUE
+            ),),
+            fluidRow(
+              div(
+                style = "margin-rigth: 20%;margin-left: 30%;width:30%;height:100px;
+                background-color: transparent;text-align:center",
+                box(
+                  img(
+                    src = 'baby_yoda.png',
+                    align = "center",
+                    style = paste0("max-width: 100%; height: ", my_height, ";")
+                  ),
+                  div(style = "height:10px;background-color: transparent;"),
+                  div(
+                    style = "height:40px;background-color: transparent;text-align:center",
+                    fileInputOnlyButton("csvs", label = "Upload files"),
+                    tags$style(".shiny-file-input-progress {display: none}")
+                  ),
+                  br(),
+                  div(
+                    style = "height:40px;background-color: transparent;text-align:center",
+                  column(5,
+                    textInput("fileId", "file id", width = "100%")),
+                  column(5,
+                    textOutput("idOut"))),
+                  br(),
+                  div(style = "height:10px;background-color: transparent;"),
+                  shinyDirButton("dir", "Input directory", "Upload"),
+                  verbatimTextOutput("dir", placeholder = TRUE),
+                  br(),
+                  div(
+                    style = "height:40px;background-color: transparent;text-align:center",
+                    actionButtonStyled(
+                      "reset",
+                      "Reset input",
+                      icon = icon("house"),
+                      width = "110px",
+                      type = "info"
+                    )
+                  ),
+                  div(style = "height:10px;background-color: transparent;"),
+                  width = 12,
+                  solidHeader = TRUE
+                )
+                
               )
-              
-            ))),
-    tabItem(
-      tabName = "dashboard",
-      fluidRow(
-        tags$style(
-          "
+            )),
+    tabItem(tabName = "dashboard",
+            fluidRow(
+              tags$style(
+                "
              .btn-file {
              background-color:black;
              border-color: white;
@@ -106,179 +126,200 @@ ui <- dashboardPage(
              }
 
              "
-        ),
-        tabBox(
-          width = 12,
-          tabPanel(title= textOutput("title1"),
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              background = "blue",
-              status = "primary",
-              selectInput('cpSelect1', '', "")
-            ),
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              background = "orange",
-              status = "warning",
-              selectInput('colorInput1', '', "")
-            ),
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              background = "green",
-              status = "info",
-              selectizeInput("PosSelect1",
-                             "",
-                             "",
-                             selected = NULL,
-                             multiple = TRUE)
-            ),
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              status = "danger",
-              background = "yellow",
-              selectizeInput("NameSelect1",
-                             "",
-                             "",
-                             selected = NULL,
-                             multiple = TRUE),
-            ),
-            style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
-            DTOutput('contents', width = "98%", height = "98%")
-          ),
-          tabPanel(
-            title= textOutput("title2"),
-            style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              background = "blue",
-              status = "primary",
-              selectInput('cpSelect2', '', "")
-            ),
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              background = "orange",
-              status = "warning",
-              selectInput('colorInput2', '', "")
-            ),
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              background = "green",
-              status = "info",
-              selectizeInput("PosSelect2",
-                             "",
-                             "",
-                             selected = NULL,
-                             multiple = TRUE)
-            ),
-            box(
-              width = 3,
-              solidHeader = TRUE,
-              status = "danger",
-              background = "yellow",
-              selectizeInput("NameSelect2",
-                             "",
-                             "",
-                             selected = NULL,
-                             multiple = TRUE),
-            ),
-            DTOutput('contents2', width = "98%", height = "98%")
-          ),
-            tabPanel(title= textOutput("title3"),
-                     box(
-                       width = 3,
-                       solidHeader = TRUE,
-                       background = "blue",
-                       status = "primary",
-                       selectInput('cpSelect3', '', "")
-                     ),
-                     box(
-                       width = 3,
-                       solidHeader = TRUE,
-                       background = "orange",
-                       status = "warning",
-                       selectInput('colorInput3', '', "")
-                     ),
-                     box(
-                       width = 3,
-                       solidHeader = TRUE,
-                       background = "green",
-                       status = "info",
-                       selectizeInput("PosSelect3",
-                                      "",
-                                      "",
-                                      selected = NULL,
-                                      multiple = TRUE)
-                     ),
-                     box(
-                       width = 3,
-                       solidHeader = TRUE,
-                       status = "danger",
-                       background = "yellow",
-                       selectizeInput("NameSelect3",
-                                      "",
-                                      "",
-                                      selected = NULL,
-                                      multiple = TRUE),
-                     ),
-                     style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
-                     DTOutput('contents3', width = "98%", height = "98%")
-            )
-        )
-      )
-    ),
-    tabItem(
-      tabName = "cell",
-      tabBox(
-        width = 12,
-        tabPanel(title= textOutput("title4"),
-      fluidPage(
-        fluidRow(
-          column(width = 3,
-                 colourInput("colNum1", label = "Choose colour range for Ct values",  "green"),
-                 colourInput("colNum2", label = NULL, "magenta"),
-                 radioButtons("var2plot", label = "Select value to plot", choices = c("Cp" = "Cp", "Concentration" = "Conc")),
-          ),#End column inputs
-          column(width = 8,
-                 #img(src = "images/96-well plot 1.png", width = "99%"),
-                 #img(src = "images/96-well plot 2.png", width = "99%")
-                 plotOutput("plot1"),
-          )
-          ))),
-      tabPanel(title= textOutput("title5"),
-               fluidPage(
-                 fluidRow(
-                   column(width = 3,
-                          colourInput("colNum3", label = "Choose colour range for Ct values",  "green"),
-                          colourInput("colNum4", label = NULL, "magenta"),
-                          radioButtons("var3plot", label = "Select value to plot", choices = c("Cp" = "Cp", "Concentration" = "Conc")),
-                   ),#End column inputs
-                   column(width = 8,
-                          #img(src = "images/96-well plot 1.png", width = "99%"),
-                          #img(src = "images/96-well plot 2.png", width = "99%")
-                          plotOutput("plot2"),
-                   )
-                 ))),
-      tabPanel(title= textOutput("title6"),
-               fluidPage(
-                 fluidRow(
-                   column(width = 3,
-                          colourInput("colNum5", label = "Choose colour range for Ct values",  "green"),
-                          colourInput("colNum6", label = NULL, "magenta"),
-                          radioButtons("var4plot", label = "Select value to plot", choices = c("Cp" = "Cp", "Concentration" = "Conc")),
-                   ),#End column inputs
-                   column(width = 8,
-                          #img(src = "images/96-well plot 1.png", width = "99%"),
-                          #img(src = "images/96-well plot 2.png", width = "99%")
-                          plotOutput("plot3"),
-                   )
-                 ))))
-    )
-  )
-))
+              ),
+              tabBox(
+                width = 12,
+                tabPanel(
+                  title = textOutput("title1"),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "blue",
+                    status = "primary",
+                    selectInput('cpSelect1', '', "")
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "orange",
+                    status = "warning",
+                    selectInput('colorInput1', '', "")
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "green",
+                    status = "info",
+                    selectizeInput("PosSelect1",
+                                   "",
+                                   "",
+                                   selected = NULL,
+                                   multiple = TRUE)
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    div(
+                      style = "height:40px;background-color: transparent;text-align:center",
+                      actionButtonStyled(
+                        "reset2",
+                        "Reset input",
+                        icon = icon("house"),
+                        width = "110px",
+                        type = "info"
+                      )
+                    ),
+                  ),
+                  style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                  DTOutput('contents', width = "98%", height = "98%")
+                ),
+                tabPanel(
+                  title = textOutput("title2"),
+                  style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "blue",
+                    status = "primary",
+                    selectInput('cpSelect2', '', "")
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "orange",
+                    status = "warning",
+                    selectInput('colorInput2', '', "")
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "green",
+                    status = "info",
+                    selectizeInput("PosSelect2",
+                                   "",
+                                   "",
+                                   selected = NULL,
+                                   multiple = TRUE)
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    div(
+                      style = "height:40px;background-color: transparent;text-align:center",
+                      actionButtonStyled(
+                        "reset3",
+                        "Reset input",
+                        icon = icon("house"),
+                        width = "110px",
+                        type = "info"
+                      )
+                    ),
+                  ),
+                  DTOutput('contents2', width = "98%", height = "98%")
+                ),
+                tabPanel(
+                  title = textOutput("title3"),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "blue",
+                    status = "primary",
+                    selectInput('cpSelect3', '', "")
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "orange",
+                    status = "warning",
+                    selectInput('colorInput3', '', "")
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    background = "green",
+                    status = "info",
+                    selectizeInput("PosSelect3",
+                                   "",
+                                   "",
+                                   selected = NULL,
+                                   multiple = TRUE)
+                  ),
+                  box(
+                    width = 3,
+                    solidHeader = TRUE,
+                    div(
+                      style = "height:40px;background-color: transparent;text-align:center",
+                      actionButtonStyled(
+                        "reset4",
+                        "Reset input",
+                        icon = icon("house"),
+                        width = "110px",
+                        type = "info"
+                      )
+                    ),
+                  ),
+                  style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                  DTOutput('contents3', width = "98%", height = "98%")
+                )
+              )
+            )),
+    tabItem(tabName = "cell",
+            tabBox(
+              width = 12,
+              tabPanel(title = textOutput("title4"),
+                       fluidPage(fluidRow(
+                         column(
+                           width = 3,
+                           colourInput("colNum1", label = "Choose colour range for Ct values",  "green"),
+                           colourInput("colNum2", label = NULL, "magenta"),
+                           radioButtons(
+                             "var2plot",
+                             label = "Select value to plot",
+                             choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                           ),
+                         ),
+                         #End column inputs
+                         column(width = 8,
+                                #img(src = "images/96-well plot 1.png", width = "99%"),
+                                #img(src = "images/96-well plot 2.png", width = "99%")
+                                plotOutput("plot1"),)
+                       ))),
+              tabPanel(title = textOutput("title5"),
+                       fluidPage(fluidRow(
+                         column(
+                           width = 3,
+                           colourInput("colNum3", label = "Choose colour range for Ct values",  "green"),
+                           colourInput("colNum4", label = NULL, "magenta"),
+                           radioButtons(
+                             "var3plot",
+                             label = "Select value to plot",
+                             choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                           ),
+                         ),
+                         #End column inputs
+                         column(width = 8,
+                                #img(src = "images/96-well plot 1.png", width = "99%"),
+                                #img(src = "images/96-well plot 2.png", width = "99%")
+                                plotOutput("plot2"),)
+                       ))),
+              tabPanel(title = textOutput("title6"),
+                       fluidPage(fluidRow(
+                         column(
+                           width = 3,
+                           colourInput("colNum5", label = "Choose colour range for Ct values",  "green"),
+                           colourInput("colNum6", label = NULL, "magenta"),
+                           radioButtons(
+                             "var4plot",
+                             label = "Select value to plot",
+                             choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                           ),
+                         ),
+                         #End column inputs
+                         column(width = 8,
+                                #img(src = "images/96-well plot 1.png", width = "99%"),
+                                #img(src = "images/96-well plot 2.png", width = "99%")
+                                plotOutput("plot3"),)
+                       )))
+            ))
+  ))
+)
