@@ -270,8 +270,6 @@ ui <- dashboardPage(
                        fluidPage(fluidRow(
                          column(
                            width = 3,
-                           colourInput("colNum1", label = "Choose colour range for Ct values",  "green"),
-                           colourInput("colNum2", label = NULL, "magenta"),
                            radioButtons(
                              "var2plot",
                              label = "Select value to plot",
@@ -288,8 +286,6 @@ ui <- dashboardPage(
                        fluidPage(fluidRow(
                          column(
                            width = 3,
-                           colourInput("colNum3", label = "Choose colour range for Ct values",  "green"),
-                           colourInput("colNum4", label = NULL, "magenta"),
                            radioButtons(
                              "var3plot",
                              label = "Select value to plot",
@@ -306,8 +302,6 @@ ui <- dashboardPage(
                        fluidPage(fluidRow(
                          column(
                            width = 3,
-                           colourInput("colNum5", label = "Choose colour range for Ct values",  "green"),
-                           colourInput("colNum6", label = NULL, "magenta"),
                            radioButtons(
                              "var4plot",
                              label = "Select value to plot",

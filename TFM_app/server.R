@@ -139,17 +139,19 @@ server <- function(input, output, session) {
   
   csvs <- function(number) {
     tmp <-
-      fread(
-        paste0(global$datapath, '/', global$lista[number]),
-        header = TRUE,
-        sep = "\t",
-        data.table = FALSE
-      )
+      read.csv2(paste0(global$datapath, '/', global$lista[number]),
+                sep='\t', dec=',', header=TRUE, skip = 1)
+      # fread(
+      #   paste0(global$datapath, '/', global$lista[number]),
+      #   header = TRUE,
+      #   sep = "\t",
+      #   data.table = FALSE
+      # )
     #Quitamos la columna Name para que no haya problemas
     tmp2 <- tmp[,!(names(tmp) %in% "Name")]
-    #tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
-    #  gsub(".", ",", x)
-    #})
+    tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
+      gsub(",", ".", x)
+    })
     tmp2
   }
   
@@ -269,7 +271,7 @@ server <- function(input, output, session) {
                              "F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12",
                              "G1","G2","G3","G4","G5","G6","G7","G8","G9","G10","G11","G12",
                              "H1","H2","H3","H4","H5","H6","H7","H8","H9","H10","H11","H12"),
-                           c(rep(0,12*8)))
+                           c(rep(100,12*8)))
   names(df_inicial) <- c("col1","col2")
   df_inicial
 })
@@ -277,21 +279,44 @@ server <- function(input, output, session) {
   gen_dataframe <- function(number){
     df1 <- df_inicial()
     df2 <- csvs(number)
-    selected_columns <- df2[c(3,4)]
+    selected_columns <- df2[c("Pos","Cp")]
     merged_df <- merge(df1, selected_columns, by.x = "col1", by.y = "Pos", all.x = TRUE)
     merged_df$Cp[is.na(merged_df$Cp)] <- 0
-    df <- merged_df[c("Pos","Cp")]
-    df
+    merged_df <- merged_df[c("col1","Cp")]
+    specific_order = c("A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12",
+                       "B1","B2","B3","B4","B5","B6","B7","B8","B9","B10","B11","B12",
+                       "C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C12",
+                       "D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12",
+                       "E1","E2","E3","E4","E5","E6","E7","E8","E9","E10","E11","E12",
+                       "F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12",
+                       "G1","G2","G3","G4","G5","G6","G7","G8","G9","G10","G11","G12",
+                       "H1","H2","H3","H4","H5","H6","H7","H8","H9","H10","H11","H12")
+    
+    merged_df <- merged_df[order(factor(merged_df$col1, levels = specific_order)),]
+    #merged_df$Cp = as.numeric(levels(merged_df$Cp))[merged_df$Cp]
+    merged_df
   }
   
   gen_dataframe2 <- function(number){
     df1 <- df_inicial()
     df2 <- csvs(number)
-    selected_columns <- df2[c(3,5)]
+    selected_columns <- df2[c("Pos","Concentration")]
     merged_df <- merge(df1, selected_columns, by.x = "col1", by.y = "Pos", all.x = TRUE)
-    merged_df$Cp[is.na(merged_df$Concentration)] <- 0
-    df <- merged_df[c("Pos","Concentration")]
-    df
+    merged_df$Cp[is.na(merged_df$Concentration)] <- 100
+    merged_df <- merged_df[c("col1","Concentration")]
+    specific_order = c("A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12",
+                       "B1","B2","B3","B4","B5","B6","B7","B8","B9","B10","B11","B12",
+                       "C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C122",
+                       "D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12",
+                       "E1","E2","E3","E4","E5","E6","E7","E8","E9","E10","E11","E12",
+                       "F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12",
+                       "G1","G2","G3","G4","G5","G6","G7","G8","G9","G10","G11","G12",
+                       "H1","H2","H3","H4","H5","H6","H7","H8","H9","H10","H11","H12")
+    
+    merged_df <- merged_df[order(factor(merged_df$col1, levels = specific_order)),]
+    options(scipen = 999)
+    merged_df$Concentration <- as.numeric(merged_df$Concentration)
+    merged_df
   }
   
   v2plot <- reactive({
@@ -317,10 +342,10 @@ server <- function(input, output, session) {
     
     if (variable == "Cp") {
       as.data.frame(t(matrix(
-        gen_dataframe(1)$Cp, nrow = 12, ncol = 8)))
+        gen_dataframe(number)$Cp, nrow = 12, ncol = 8)))
     } else{
       as.data.frame(t(matrix(
-        log10(gen_dataframe2(1)$Concentration),
+        log10(gen_dataframe2(number)$Concentration),
         nrow = 12,
         ncol = 8
       )))
@@ -348,30 +373,23 @@ server <- function(input, output, session) {
       geom_circle(aes(
         x0 = col,
         y0 = row,
-        r = 0.45,
-        fill = value
-      )) +
-      coord_equal() +
-      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+        r = 0.4,
+        fill = as.numeric(value)
+       )) +
+       coord_equal() +
+      scale_x_continuous(breaks = 1:12,expand = expansion(mult = c(0.01, 0.01)))+
       scale_y_continuous(
-        breaks = 1:8,
-        labels = LETTERS[1:8],
-        expand = expansion(mult = c(0.01, 0.01)),
-        trans = reverse_trans()
-      ) +
-      scale_fill_gradient(low = input$colNum2, high = input$colNum1) +
-      labs(
-        title = "96 Well plate of TRECs",
-        subtitle = "Cp or log10(Conc) values",
-        x = "Col",
-        y = "Row"
-      ) +
-      theme_bw() +
-      theme(
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = "none"
-      )
+           breaks = 1:8,
+           labels = LETTERS[1:8],
+           expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans())+
+      scale_fill_gradientn(colours = terrain.colors(20))+
+    labs(
+      title = "96 Well plate of TRECs",
+      subtitle = "Cp or log10(Conc) values",
+      x = "Col",
+      y = "Row"
+    ) +
+    theme_bw()
   })
   
   output$plot2 <- renderPlot({
@@ -381,30 +399,23 @@ server <- function(input, output, session) {
       geom_circle(aes(
         x0 = col,
         y0 = row,
-        r = 0.45,
-        fill = value
+        r = 0.4,
+        fill = as.numeric(value)
       )) +
       coord_equal() +
-      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+      scale_x_continuous(breaks = 1:12,expand = expansion(mult = c(0.01, 0.01)))+
       scale_y_continuous(
         breaks = 1:8,
         labels = LETTERS[1:8],
-        expand = expansion(mult = c(0.01, 0.01)),
-        trans = reverse_trans()
-      ) +
-      scale_fill_gradient(low = input$colNum4, high = input$colNum3) +
+        expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans())+
+      scale_fill_gradientn(colours = heat.colors(20))+
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
         y = "Row"
       ) +
-      theme_bw() +
-      theme(
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = "none"
-      )
+      theme_bw() 
   })
   
   output$plot3 <- renderPlot({
@@ -414,30 +425,23 @@ server <- function(input, output, session) {
       geom_circle(aes(
         x0 = col,
         y0 = row,
-        r = 0.45,
-        fill = value
+        r = 0.4,
+        fill = as.numeric(value)
       )) +
       coord_equal() +
-      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+      scale_x_continuous(breaks = 1:12,expand = expansion(mult = c(0.01, 0.01)))+
       scale_y_continuous(
         breaks = 1:8,
         labels = LETTERS[1:8],
-        expand = expansion(mult = c(0.01, 0.01)),
-        trans = reverse_trans()
-      ) +
-      scale_fill_gradient(low = input$colNum6, high = input$colNum5) +
+        expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans())+
+      scale_fill_gradientn(colours = topo.colors(20))+
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
         y = "Row"
       ) +
-      theme_bw() +
-      theme(
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        legend.position = "none"
-      )
+      theme_bw() 
   })
   
   
