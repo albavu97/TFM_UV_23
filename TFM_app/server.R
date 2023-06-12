@@ -373,7 +373,7 @@ server <- function(input, output, session) {
       geom_circle(aes(
         x0 = col,
         y0 = row,
-        r = 0.4,
+        r = 0.5,
         fill = as.numeric(value)
        )) +
        coord_equal() +
@@ -382,7 +382,7 @@ server <- function(input, output, session) {
            breaks = 1:8,
            labels = LETTERS[1:8],
            expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans())+
-      scale_fill_gradientn(colours = terrain.colors(20))+
+      scale_fill_gradientn(colours = terrain.colors(40))+
     labs(
       title = "96 Well plate of TRECs",
       subtitle = "Cp or log10(Conc) values",
@@ -399,7 +399,7 @@ server <- function(input, output, session) {
       geom_circle(aes(
         x0 = col,
         y0 = row,
-        r = 0.4,
+        r = 0.5,
         fill = as.numeric(value)
       )) +
       coord_equal() +
@@ -408,7 +408,7 @@ server <- function(input, output, session) {
         breaks = 1:8,
         labels = LETTERS[1:8],
         expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans())+
-      scale_fill_gradientn(colours = heat.colors(20))+
+      scale_fill_gradientn(colours = heat.colors(40))+
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
@@ -425,7 +425,7 @@ server <- function(input, output, session) {
       geom_circle(aes(
         x0 = col,
         y0 = row,
-        r = 0.4,
+        r = 0.5,
         fill = as.numeric(value)
       )) +
       coord_equal() +
@@ -434,7 +434,7 @@ server <- function(input, output, session) {
         breaks = 1:8,
         labels = LETTERS[1:8],
         expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans())+
-      scale_fill_gradientn(colours = topo.colors(20))+
+      scale_fill_gradientn(colours = topo.colors(40))+
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
@@ -444,228 +444,23 @@ server <- function(input, output, session) {
       theme_bw() 
   })
   
+  output$graph <- renderPlotly({
+    fig <- plot_ly(y = ~csvs(1)$Cp, type = "box")
+    fig <- fig %>% add_trace(y = ~csvs(2)$Cp)
+    fig <- fig %>% add_trace(y = ~csvs(3)$Cp)
+  })
   
+  output$graph2 <- renderPlotly({
+    fig <- plot_ly(y = ~csvs(2)$Cp, type = "box", jitter = 0.3,
+                   pointpos = -1.8)
+    
+  })
   
+  output$graph3 <- renderPlotly({
+    fig <- plot_ly(y = ~csvs(3)$Cp, type = "box")
+    
+  })
   
-  
-  #
-  #   if (length(csvs()) > 3) {
-  #     shinyalert("Warning!", "You can't upload more than 3 files.", type = "warning")
-  #   } else if (length(csvs()) == 3){
-  #     titleUpdate3()
-  #   output$contents2 <- renderDT({
-  #     datatable(
-  #       datafile2(),
-  #       options = list(
-  #         pageLength = 10,
-  #         columnDefs = list(list(
-  #           className = 'dt-center', targets = 5
-  #         )),
-  #         lengthMenu = c(5, 10, 15, 20),
-  #         initComplete = JS(
-  #           "function(settings, json) {",
-  #           "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-  #           "}"
-  #         )
-  #       )
-  #     )
-  #   })
-  #   output$contents3 <- renderDT({
-  #     datatable(
-  #       datafile3(),
-  #       options = list(
-  #         pageLength = 10,
-  #         columnDefs = list(list(
-  #           className = 'dt-center', targets = 5
-  #         )),
-  #         lengthMenu = c(5, 10, 15, 20),
-  #         initComplete = JS(
-  #           "function(settings, json) {",
-  #           "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-  #           "}"
-  #         )
-  #       )
-  #     )
-  #   })
-  #   output$contents <- renderDT({
-  #     datatable(
-  #       datafile1(),
-  #       options = list(
-  #         pageLength = 10,
-  #         columnDefs = list(list(
-  #           className = 'dt-center', targets = 5
-  #         )),
-  #         lengthMenu = c(5, 10, 15, 20),
-  #         initComplete = JS(
-  #           "function(settings, json) {",
-  #           "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-  #           "}"
-  #         )
-  #       )
-  #     )
-  #   })
-  #   update_function1(1)
-  #   update_function1(2)
-  #   update_function1(3)
-  #   }
-  #   else if (length(csvs()) == 2){
-  #     titleUpdate2()
-  #     output$contents2 <- renderDT({
-  #       datatable(
-  #         datafile2(),
-  #         options = list(
-  #           pageLength = 10,
-  #           columnDefs = list(list(
-  #             className = 'dt-center', targets = 5
-  #           )),
-  #           lengthMenu = c(5, 10, 15, 20),
-  #           initComplete = JS(
-  #             "function(settings, json) {",
-  #             "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-  #             "}"
-  #           )
-  #         )
-  #       )
-  #     })
-  #     output$contents <- renderDT({
-  #       datatable(
-  #         datafile1(),
-  #         options = list(
-  #           pageLength = 10,
-  #           columnDefs = list(list(
-  #             className = 'dt-center', targets = 5
-  #           )),
-  #           lengthMenu = c(5, 10, 15, 20),
-  #           initComplete = JS(
-  #             "function(settings, json) {",
-  #             "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-  #             "}"
-  #           )
-  #         )
-  #       )
-  #     })
-  #     update_function1(1)
-  #     update_function1(2)
-  #     }else if(length(csvs())==1){
-  #       titleUpdate1()
-  #       output$contents <- renderDT({
-  #         datatable(
-  #           datafile1(),
-  #           options = list(
-  #             pageLength = 10,
-  #             columnDefs = list(list(
-  #               className = 'dt-center', targets = 5
-  #             )),
-  #             lengthMenu = c(5, 10, 15, 20),
-  #             initComplete = JS(
-  #               "function(settings, json) {",
-  #               "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-  #               "}"
-  #             )
-  #           )
-  #         )
-  #       })
-  #       update_function1(1)
-  #     }
-  #   ###############################
-  #   #TRANSFORM INPUT FILES TO A MATRIX (for Cp and log10(Conc) values)
-  #   #and convert that to data frames:
-  #   v2plot <- reactive({
-  #     input$var2plot
-  #   })
-  #
-  #   v3plot <- reactive({
-  #     input$var3plot
-  #   })
-  #   v4plot <- reactive({
-  #     input$var4plot
-  #   })
-  #
-  #
-  #   df1 <-  function(number){
-  #     if (number==1){
-  #       variable=v2plot()
-  #     }else if(number=="2"){
-  #       variable=v3plot()
-  #     }else if(number==3){
-  #       variable=v4plot()
-  #     }
-  #
-  #     if (variable=="Cp"){
-  #       as.data.frame(t(matrix(csvs()[[number]]$Cp, nrow = 12, ncol = 8)))
-  #     }else{
-  #       as.data.frame(t(matrix(log10(csvs()[[number]]$Concentration), nrow = 12, ncol = 8)))
-  #     }
-  #   }
-  #
-  #   #TRANSFORM INPUT DATA TO LONG DATA FORMAT
-  #   #Adding row and column numbers and overall well name.
-  #   #Note that rows are represent by letters in microtiter plate, but lets keep them as integers.
-  #   #Continous scale will help later on with scaling.
-  #   require(tidyverse)
-  #   ldf1 <- function(number){
-  #     df1(number) %>%
-  #       mutate(row = 1:8) %>%
-  #       pivot_longer(-row, names_to = "col", values_to = "value") %>%
-  #       mutate(col = as.integer(str_remove(col, "V"))) %>%
-  #       mutate(well = paste0(LETTERS[row], col))
-  #   }
-  #
-  #   output$plot1 <- renderPlot({
-  #     # check input data and rise an error message if none
-  #     validate(
-  #       need(csvs()[[1]], "Please, upload a data set with data 1")
-  #     )
-  #     ggplot(data = ldf1(1)) +
-  #       geom_circle(aes(x0 = col, y0 = row, r = 0.45, fill = value)) +
-  #       coord_equal() +
-  #       scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
-  #       scale_y_continuous(breaks = 1:8, labels = LETTERS[1:8], expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans()) +
-  #       scale_fill_gradient(low = input$colNum2, high = input$colNum1) +
-  #       labs(title = "96 Well plate of TRECs", subtitle = "Cp or log10(Conc) values", x = "Col", y = "Row") +
-  #       theme_bw() +
-  #       theme(panel.grid.major = element_blank(),
-  #             panel.grid.minor = element_blank(),
-  #             legend.position = "none")
-  #   })
-  #
-  #   output$plot2 <- renderPlot({
-  #     # check input data and rise an error message if none
-  #     validate(
-  #       need(csvs()[[2]], "Please, upload a data set with data 1")
-  #     )
-  #     ggplot(data = ldf1(2)) +
-  #       geom_circle(aes(x0 = col, y0 = row, r = 0.45, fill = value)) +
-  #       coord_equal() +
-  #       scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
-  #       scale_y_continuous(breaks = 1:8, labels = LETTERS[1:8], expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans()) +
-  #       scale_fill_gradient(low = input$colNum4, high = input$colNum3) +
-  #       labs(title = "96 Well plate of TRECs", subtitle = "Cp or log10(Conc) values", x = "Col", y = "Row") +
-  #       theme_bw() +
-  #       theme(panel.grid.major = element_blank(),
-  #             panel.grid.minor = element_blank(),
-  #             legend.position = "none")
-  #   })
-  #
-  #   output$plot3 <- renderPlot({
-  #     # check input data and rise an error message if none
-  #     validate(
-  #       need(csvs()[[3]], "Please, upload a data set with data 1")
-  #     )
-  #     ggplot(data = ldf1(3)) +
-  #       geom_circle(aes(x0 = col, y0 = row, r = 0.45, fill = value)) +
-  #       coord_equal() +
-  #       scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
-  #       scale_y_continuous(breaks = 1:8, labels = LETTERS[1:8], expand = expansion(mult = c(0.01, 0.01)), trans = reverse_trans()) +
-  #       scale_fill_gradient(low = input$colNum6, high = input$colNum5) +
-  #       labs(title = "96 Well plate of TRECs", subtitle = "Cp or log10(Conc) values", x = "Col", y = "Row") +
-  #       theme_bw() +
-  #       theme(panel.grid.major = element_blank(),
-  #             panel.grid.minor = element_blank(),
-  #             legend.position = "none")
-  #   })
-  #
-  # })
   
   observeEvent(input$reset, {
     output$contents <- NULL

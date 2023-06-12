@@ -49,61 +49,80 @@ ui <- dashboardPage(
              icon = icon("table")),
     menuItem("Cell",
              tabName = "cell",
-             icon = icon("flask"))
-  )),
+             icon = icon("flask")),
+  menuItem("Box Plot",
+           tabName = "plot",
+           icon = icon("chart-simple"))
+)),
   dashboardBody(tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
   ),
   tabItems(
-    tabItem(tabName = "home",
-            fluidRow(column(
-              12, div(style = "height:200px;background-color: transparent;")
-            ),),
-            fluidRow(
-              div(
-                style = "margin-rigth: 20%;margin-left: 30%;width:30%;height:100px;
+    tabItem(
+      tabName = "home",
+      fluidRow(column(
+        12, div(style = "height:200px;background-color: transparent;")
+      )),
+      div(
+        style = "margin-rigth: 30%;margin-left: 30%;width:40%;height:100px;
                 background-color: transparent;text-align:center",
-                box(
-                  img(
-                    src = 'baby_yoda.png',
-                    align = "center",
-                    style = paste0("max-width: 100%; height: ", my_height, ";")
-                  ),
-                  div(style = "height:10px;background-color: transparent;"),
-                  div(
-                    style = "height:40px;background-color: transparent;text-align:center",
-                    fileInputOnlyButton("csvs", label = "Upload files"),
-                    tags$style(".shiny-file-input-progress {display: none}")
-                  ),
-                  br(),
-                  div(
-                    style = "height:40px;background-color: transparent;text-align:center",
-                  column(5,
-                    textInput("fileId", "file id", width = "100%")),
-                  column(5,
-                    textOutput("idOut"))),
-                  br(),
-                  div(style = "height:10px;background-color: transparent;"),
-                  shinyDirButton("dir", "Input directory", "Upload"),
-                  verbatimTextOutput("dir", placeholder = TRUE),
-                  br(),
-                  div(
-                    style = "height:40px;background-color: transparent;text-align:center",
-                    actionButtonStyled(
-                      "reset",
-                      "Reset input",
-                      icon = icon("house"),
-                      width = "110px",
-                      type = "info"
-                    )
-                  ),
-                  div(style = "height:10px;background-color: transparent;"),
-                  width = 12,
-                  solidHeader = TRUE
+        box(
+          img(
+            src = 'baby_yoda.png',
+            align = "center",
+            style = paste0("max-width: 100%; height: ", my_height, ";")
+          ),
+          div(style = "height:10px;background-color: transparent;"),
+          div(
+            style = "height:40px;background-color: transparent;text-align:center",
+            fileInputOnlyButton("csvs", label = "Upload files"),
+            tags$style(".shiny-file-input-progress {display: none}")
+          ),
+          div(style = "height:10px;background-color: transparent;"),
+          div(style = "height:40px;background-color: transparent;text-align:center",
+              
+              textInput("fileId", "Input File ID", width = "100%")),
+          div(style = "height:40px;background-color: transparent;"),
+          div(style = "height:40px;background-color: transparent;",
+              column(
+                width = 4,
+                offset = 4,
+                tags$style(
+                  ".btn-default{
+  background-color: #2CA666;
+    color: white;
+    border-color: black;
+    font-weight: bold;
+}"
+                ),
+                shinyDirButton(
+                  "dir",
+                  "Input directory",
+                  "Upload",
+                  icon = icon("folder"),
+                  viewtype = "detail"
                 )
-                
-              )
-            )),
+              )),
+          div(style = "height:20px;background-color: transparent;"),
+          div(
+            style = "height:40px;background-color: transparent;text-align:center",
+            actionButtonStyled(
+              "reset",
+              "Reset input",
+              icon = icon("house"),
+              width = "110px",
+              type = "info"
+            )
+          ),
+          div(style = "height:10px;background-color: transparent;"),
+          width = 12,
+          solidHeader = TRUE
+        )
+        
+      )
+    )
+    
+    ,
     tabItem(tabName = "dashboard",
             fluidRow(
               tags$style(
@@ -280,7 +299,7 @@ ui <- dashboardPage(
                          column(width = 8,
                                 #img(src = "images/96-well plot 1.png", width = "99%"),
                                 #img(src = "images/96-well plot 2.png", width = "99%")
-                                plotOutput("plot1"),)
+                                plotOutput("plot1"), )
                        ))),
               tabPanel(title = textOutput("title5"),
                        fluidPage(fluidRow(
@@ -296,7 +315,7 @@ ui <- dashboardPage(
                          column(width = 8,
                                 #img(src = "images/96-well plot 1.png", width = "99%"),
                                 #img(src = "images/96-well plot 2.png", width = "99%")
-                                plotOutput("plot2"),)
+                                plotOutput("plot2"), )
                        ))),
               tabPanel(title = textOutput("title6"),
                        fluidPage(fluidRow(
@@ -312,8 +331,16 @@ ui <- dashboardPage(
                          column(width = 8,
                                 #img(src = "images/96-well plot 1.png", width = "99%"),
                                 #img(src = "images/96-well plot 2.png", width = "99%")
-                                plotOutput("plot3"),)
+                                plotOutput("plot3"), )
                        )))
-            ))
+            )),
+    tabItem(
+      tabName = "plot",
+      tabBox(
+        width = 12,
+        tabPanel(title="nuevo",
+                 plotlyOutput("graph"),
+                 plotlyOutput("graph2"),
+                 plotlyOutput("graph3"))))
   ))
 )
