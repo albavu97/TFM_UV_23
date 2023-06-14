@@ -28,15 +28,6 @@ server <- function(input, output, session) {
   
   dir <- reactive(input$dir)
   
-  output$dir <- renderText({
-    # if (length(global$lista) < 1) {
-    #   shinyalert("Warning!", "No hay archivos con ese id.", type = "warning")
-    # } else{
-    paste0(global$datapath, global$lista[1])
-    #str_extract(global$lista[1],'\\d+')
-    #}
-  })
-  
   render1 <- reactive({
     output$contents <- renderDT({
       datatable(
@@ -445,21 +436,100 @@ server <- function(input, output, session) {
   })
   
   output$graph <- renderPlotly({
-    fig <- plot_ly(y = ~csvs(1)$Cp, type = "box")
-    fig <- fig %>% add_trace(y = ~csvs(2)$Cp)
-    fig <- fig %>% add_trace(y = ~csvs(3)$Cp)
-  })
-  
-  output$graph2 <- renderPlotly({
-    fig <- plot_ly(y = ~csvs(2)$Cp, type = "box", jitter = 0.3,
-                   pointpos = -1.8)
+    fig <- plot_ly(type = "box")
+    fig <- fig %>% add_boxplot(y = csvs(1)$Cp, jitter = 0.3, pointpos = -1.8, boxpoints = 'all',
+                               marker = list(color = 'rgb(7,40,89)'),
+                               line = list(color = 'rgb(7,40,89)'),
+                               name = global$lista[1])
+    fig <- fig %>% add_boxplot(y = csvs(2)$Cp, name = global$lista[2], boxpoints = FALSE,
+                               marker = list(color = 'rgb(9,56,125)'),
+                               line = list(color = 'rgb(9,56,125)'))
+    fig <- fig %>% add_boxplot(y = csvs(3)$Cp, name = global$lista[3], boxpoints = 'suspectedoutliers',
+                               marker = list(color = 'rgb(8,81,156)',
+                                             outliercolor = 'rgba(219, 64, 82, 0.6)',
+                                             line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                                                         outlierwidth = 2)),
+                               line = list(color = 'rgb(8,81,156)'))
+    fig <- fig %>% layout(title = "Box Plot Styling Outliers")
     
   })
   
-  output$graph3 <- renderPlotly({
-    fig <- plot_ly(y = ~csvs(3)$Cp, type = "box")
-    
+  ### TABLA Y GRAFICO DE TODOS LOS ARCHIVOS ###
+  #Elegir el directorio donde queremos buscar
+  
+  
+  shinyDirChoose(
+    input,
+    'dir2',
+    roots = c(home = '~'),
+    filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw")
+  )
+  
+  global2 <- reactiveValues(datapath = getwd())
+  
+  dir2 <- reactive(input$dir2)
+  
+  observeEvent(ignoreNULL = TRUE,
+               eventExpr = {
+                 input$dir2
+               },
+               handlerExpr = {
+                 if (!"path" %in% names(dir()))
+                   return()
+                 home <- normalizePath("~")
+                 global2$datapath <-
+                   file.path(home, paste(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
+                 global2$lista <-
+                   list.files(global2$datapath,
+                              pattern = input$plot2,
+                              recursive = TRUE)
+                 if (length(global2$lista) == 0) {
+                   shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
+                 }else{
+                   output$number_txt <- renderText({ "global2$datapath" })}
+                 })
+  
+  render_big_plot <- reactive({
+    mypath = "~/Desktop/datos_qpcr/"
+    setwd(mypath)
+    files_list <- list.files(mypath,
+                             pattern = paste0("*",input$plot2, ".txt"),
+                             recursive = TRUE)
+    read.csv2(txt_files_ls[1],
+              sep='\t', dec=',', header=TRUE, skip = 1)
+    for (txt_file in files_list[2:length(files_list)]){
+      tmp <-
+        read.csv2(txt_file,
+                  sep='\t', dec=',', header=TRUE, skip = 1)
+      common <- intersect(colnames(files), colnames(tmp))
+      files <- rbind(files[common],tmp[common])
+      files["Name"] <- NULL
+    }
+    files
   })
+  observeEvent(ignoreNULL = TRUE,
+               eventExpr = {
+                 input$plot2
+               },
+  
+  output$plot_big <- renderDT({
+    datatable(
+      render_big_plot(),
+      options = list(
+        pageLength = 10,
+        columnDefs = list(list(
+          className = 'dt-center', targets = 5
+        )),
+        lengthMenu = c(5, 10, 15, 20),
+        initComplete = JS(
+          "function(settings, json) {",
+          "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+          "}"
+        )
+      )
+    )
+  })
+)
   
   
   observeEvent(input$reset, {

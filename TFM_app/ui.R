@@ -11,6 +11,7 @@ library(dipsaus)
 library(shinyjs)
 library(colourpicker)
 library(shinyFiles)
+library(plotly)
 
 my_height = "100px"
 
@@ -52,7 +53,10 @@ ui <- dashboardPage(
              icon = icon("flask")),
   menuItem("Box Plot",
            tabName = "plot",
-           icon = icon("chart-simple"))
+           icon = icon("chart-simple")),
+  menuItem("Plot",
+           tabName = "plot_all",
+           icon = icon("hand"))
 )),
   dashboardBody(tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
@@ -338,9 +342,26 @@ ui <- dashboardPage(
       tabName = "plot",
       tabBox(
         width = 12,
-        tabPanel(title="nuevo",
-                 plotlyOutput("graph"),
-                 plotlyOutput("graph2"),
-                 plotlyOutput("graph3"))))
+        tabPanel(title="Box Plot",
+                 plotlyOutput("graph")))),
+    tabItem(
+      tabName = "plot_all",
+    fluidPage(
+      fluidRow(
+        column(width = 3,
+               shinyDirButton(
+                 "dir2",
+                 "Input directory",
+                 "Upload",
+                 icon = icon("folder"),
+                 viewtype = "detail"
+               ),
+               radioButtons("plot2", label = "Select the biomarker to plot", choices = c("KREC" = "KREC", "TREC" = "TREC","Other" ="Other")),             
+               textOutput("number_txt")               ),
+  column(width = 8,
+         style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+         DTOutput('plot_big', width = "98%", height = "98%"))
   ))
+)
+))
 )
