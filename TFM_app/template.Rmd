@@ -2,7 +2,6 @@
 title: "template"
 date: "`r Sys.time()`"
 output: pdf_document
-classoption: landscape
 header-includes:
   \usepackage{fancyhdr}
   \usepackage{graphicx}
@@ -16,11 +15,53 @@ params:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-\addtolength{\headheight}{3.0cm} 
+\addtolength{\headheight}{1.0cm} 
 \fancypagestyle{plain}{} 
 \pagestyle{fancy} 
-\fancyhead[R]{\includegraphics[width = 100pt]{logoRoche2.jpg}}
-\renewcommand{\headrulewidth}{0pt} 
+\fancyhead[R]{\includegraphics[width = 80pt]{logoRoche2.jpg}}
+\lhead[L]{Google - Google PD - \today}
+\renewcommand{\headrulewidth}{0.4pt} 
+\renewcommand{\footrulewidth}{0.4pt}
+
+```{r setup2, echo=FALSE}
+var1 <- params$imported$file1
+var2 <- params$imported$file2
+var3 <- params$imported$file3
+if(var1 == "FALSE"){
+  show_text <- FALSE
+}else{
+  show_text <- TRUE
+}
+if(var2 == "FALSE"){
+  show_text2 <- FALSE
+}else{
+  show_text2 <- TRUE
+}
+if(var3 == "FALSE"){
+  show_text3 <- FALSE
+}else{
+  show_text3 <- TRUE
+}
+
+plot1 <- params$imported$plot1
+plot2 <- params$imported$plot2
+plot3 <- params$imported$plot3
+if(plot1 == "FALSE"){
+  show_plot <- FALSE
+}else{
+  show_plot <- TRUE
+}
+if(plot2 == "FALSE"){
+  show_plot2 <- FALSE
+}else{
+  show_plot2 <- TRUE
+}
+if(plot3 == "FALSE"){
+  show_plot3 <- FALSE
+}else{
+  show_plot3 <- TRUE
+}
+```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -29,11 +70,10 @@ require(dplyr)
 
 ```
 
-## Relationships between all variables:
+# Tablas asociados a los archivos
 
-## Quick view of the data:
-
-```{r table, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r table, echo=FALSE, eval=show_text,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Tabla primer archivo")
 
 # objects passed as params are accessed from params$imported
 params$imported$dat_table %>% 
@@ -41,12 +81,112 @@ params$imported$dat_table %>%
   
 ```
 
-\pagebreak
 
-```{r table2, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r table2, echo=FALSE,eval=show_text2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Tabla segundo archivo")
 
 # objects passed as params are accessed from params$imported
 params$imported$dat_table2 %>% 
   kable(format = "markdown")
   
+```
+
+```{r table3, echo=FALSE,eval=show_text3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Tabla tercer archivo")
+
+# objects passed as params are accessed from params$imported
+params$imported$dat_table3 %>% 
+  kable(format = "markdown")
+  
+```
+
+``` {r boxplot, echo=FALSE, eval= show_plot, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+cat("## 96-Well plot primer archivo")
+
+
+ggplot(data = params$imported$boxplot) +
+      geom_circle(aes(
+        x0 = col,
+        y0 = row,
+        r = 0.5,
+        fill = as.numeric(value)
+      )) +
+      coord_equal() +
+      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+      scale_y_continuous(
+        breaks = 1:8,
+        labels = LETTERS[1:8],
+        expand = expansion(mult = c(0.01, 0.01)),
+        trans = reverse_trans()
+      ) +
+      scale_fill_gradientn(colours = terrain.colors(40)) +
+      labs(
+        title = "96 Well plate of TRECs",
+        subtitle = "Cp or log10(Conc) values",
+        x = "Col",
+        y = "Row"
+      ) +
+      theme_bw()
+```
+
+``` {r boxplot2, echo=FALSE,eval=show_plot2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+cat("## 96-Well plot segundo archivo")
+
+ggplot(data = params$imported$boxplot2) +
+      geom_circle(aes(
+        x0 = col,
+        y0 = row,
+        r = 0.5,
+        fill = as.numeric(value)
+      )) +
+      coord_equal() +
+      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+      scale_y_continuous(
+        breaks = 1:8,
+        labels = LETTERS[1:8],
+        expand = expansion(mult = c(0.01, 0.01)),
+        trans = reverse_trans()
+      ) +
+      scale_fill_gradientn(colours = terrain.colors(40)) +
+      labs(
+        title = "96 Well plate of TRECs",
+        subtitle = "Cp or log10(Conc) values",
+        x = "Col",
+        y = "Row"
+      ) +
+      theme_bw()
+```
+
+``` {r boxplot3, echo=FALSE, eval=show_plot3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+cat("## 96-Well plot tercer archivo")
+
+ggplot(data = params$imported$boxplot3) +
+      geom_circle(aes(
+        x0 = col,
+        y0 = row,
+        r = 0.5,
+        fill = as.numeric(value)
+      )) +
+      coord_equal() +
+      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+      scale_y_continuous(
+        breaks = 1:8,
+        labels = LETTERS[1:8],
+        expand = expansion(mult = c(0.01, 0.01)),
+        trans = reverse_trans()
+      ) +
+      scale_fill_gradientn(colours = terrain.colors(40)) +
+      labs(
+        title = "96 Well plate of TRECs",
+        subtitle = "Cp or log10(Conc) values",
+        x = "Col",
+        y = "Row"
+      ) +
+      theme_bw()
+```
+
+``` {r boxplot_long, echo=FALSE, eval=show_plot3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+cat("## Box plot 3 archivos")
+
+boxplot(params$imported$cp1)
 ```

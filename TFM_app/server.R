@@ -33,7 +33,6 @@ server <- function(input, output, session) {
   
   dir <- reactive(input$dir)
   
-  file1_df <- reactive(input$file1_input)
   
   render1 <- reactive({
     output$contents <- renderDT({
@@ -94,10 +93,6 @@ server <- function(input, output, session) {
     })
   })
   
-  df_select <- reactive({
-    input$DF_select
-  })
-  
   
   
   observeEvent(ignoreNULL = TRUE,
@@ -114,25 +109,27 @@ server <- function(input, output, session) {
                    list.files(global$datapath,
                               pattern = global$file,
                               recursive = TRUE)
+                 my_vals$lista <- global$lista
                  if (length(global$lista) == 1) {
                    titleUpdate1()
                    render1()
                    update_function1(1)
-                   if (is.element(global$lista[1],df_select())) {
-                   # to pass to markdown incase we need the full dataset
+                   # Values for markdown template
                    my_vals$dat_table <- csvs(1)
-                   }
+                   my_vals$boxplot <- ldf1(1)
+                   
                  } else if (length(global$lista) == 2) {
                    titleUpdate2()
                    render1()
                    render2()
                    update_function1(1)
                    update_function1(2)
-                   output$DF_select2 <- renderText({ file1_df() })
-                   if (file1_df() == "SI") {
-                     # to pass to markdown incase we need the full dataset
-                     my_vals$dat_table2 <- csvs(2)
-                   }
+                   
+                   # Values for markdown template
+                   my_vals$dat_table <- csvs(1)
+                   my_vals$boxplot <- ldf1(1)
+                   my_vals$dat_table2 <- csvs(2)
+                   my_vals$boxplot2 <- ldf1(2)
                    # to pass to markdown incase we need the full dataset
                  } else if (length(global$lista) == 3) {
                    titleUpdate3()
@@ -143,7 +140,18 @@ server <- function(input, output, session) {
                    update_function1(2)
                    update_function1(3)
                    # to pass to markdown incase we need the full dataset
+                   # Values for markdown template
                    my_vals$dat_table <- csvs(1)
+                   my_vals$boxplot <- ldf1(1)
+                   my_vals$dat_table2 <- csvs(2)
+                   my_vals$boxplot2 <- ldf1(2)
+                   my_vals$dat_table3 <- csvs(3)
+                   my_vals$boxplot3 <- ldf1(3)
+                   #Boxplot de los 3 archivos
+                   my_vals$cp1 <- csvs(1)$Cp
+                   my_vals$cp2 <- csvs(2)$Cp
+                   my_vals$cp3 <- csvs(3)$Cp
+                   
                  }
                  else if (length(global$lista) == 0) {
                    shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
@@ -912,6 +920,13 @@ server <- function(input, output, session) {
   output$report_gen <- downloadHandler(
     filename = "sample_report.pdf",
     content = function(file) {
+      my_vals$file1 <- input$file1_input
+      my_vals$file2 <- input$file2_input
+      my_vals$file3 <- input$file3_input
+      #Values to plot 96-well
+      my_vals$plot1 <- input$plot1_input
+      my_vals$plot2 <- input$plot2_input
+      my_vals$plot3 <- input$plot3_input
       # copy markdown report file to a temporary directory before knitting it with the
       # selected dataset. This is useful if we don't have write permissions for the current
       # working directory

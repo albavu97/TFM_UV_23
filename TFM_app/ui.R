@@ -313,7 +313,7 @@ ui <- dashboardPage(
                            column(width = 8,
                                   #img(src = "images/96-well plot 1.png", width = "99%"),
                                   #img(src = "images/96-well plot 2.png", width = "99%")
-                                  plotOutput("plot1"),)
+                                  plotOutput("plot1"), )
                          ))),
                 tabPanel(title = textOutput("title5"),
                          fluidPage(fluidRow(
@@ -329,7 +329,7 @@ ui <- dashboardPage(
                            column(width = 8,
                                   #img(src = "images/96-well plot 1.png", width = "99%"),
                                   #img(src = "images/96-well plot 2.png", width = "99%")
-                                  plotOutput("plot2"),)
+                                  plotOutput("plot2"), )
                          ))),
                 tabPanel(title = textOutput("title6"),
                          fluidPage(fluidRow(
@@ -345,7 +345,7 @@ ui <- dashboardPage(
                            column(width = 8,
                                   #img(src = "images/96-well plot 1.png", width = "99%"),
                                   #img(src = "images/96-well plot 2.png", width = "99%")
-                                  plotOutput("plot3"),)
+                                  plotOutput("plot3"), )
                          )))
               )),
       tabItem(tabName = "plot",
@@ -355,35 +355,37 @@ ui <- dashboardPage(
                          plotlyOutput("graph"))
               )),
       tabItem(tabName = "plot_all",
-              fluidPage(fluidRow(
-                column(
-                  width = 3,
-                  selectInput(
-                    "type_file",
-                    label = "Select the biomarker to plot",
-                    selected = NULL,
-                    choices = c(
-                      " " = "NULL",
-                      "KREC" = "KREC",
-                      "TREC" = "TREC",
-                      "Other" = "Other"
+              fluidPage(
+                fluidRow(
+                  column(
+                    width = 3,
+                    selectInput(
+                      "type_file",
+                      label = "Select the biomarker to plot",
+                      selected = NULL,
+                      choices = c(
+                        " " = "NULL",
+                        "KREC" = "KREC",
+                        "TREC" = "TREC",
+                        "Other" = "Other"
+                      )
                     )
-                  )
-                ),
-                column(
-                  width = 3,
-                  shinyDirButton(
-                    "dir2",
-                    "Input directory",
-                    "Upload",
-                    icon = icon("folder"),
-                    viewtype = "detail"
                   ),
-                  div(style = "height:10px;background-color: transparent;"),
-                  actionButtonStyled("display",
-                                     "Display",
-                                     type = "warning",
-                                     width = "100%")),
+                  column(
+                    width = 3,
+                    shinyDirButton(
+                      "dir2",
+                      "Input directory",
+                      "Upload",
+                      icon = icon("folder"),
+                      viewtype = "detail"
+                    ),
+                    div(style = "height:10px;background-color: transparent;"),
+                    actionButtonStyled("display",
+                                       "Display",
+                                       type = "warning",
+                                       width = "100%")
+                  ),
                   column(
                     width = 3,
                     actionButtonStyled(
@@ -401,33 +403,68 @@ ui <- dashboardPage(
                     div(style = "height:50px;background-color: transparent;"),
                     plotlyOutput("graph2")
                   )
-                
-              ))),
+                  
+                )
+              )),
       tabItem("report",
-              fluidPage(fluidRow(
-                column(3,
-                       selectizeInput("DF_select",
-                                      "",
-                                      "",
-                                      selected = NULL,
-                                      multiple = TRUE),
-                       radioButtons(
-                         "file1_input",
-                         label = "Do you want to include file 1:",
-                         choices = c("SI" = "SI", "NO" = "NO"),
-                         selected = NULL
-                       ),
-                       verbatimTextOutput("DF_select2", placeholder = TRUE)
-              )),fluidRow(
-                column(
+              fluidPage(
+                fluidRow(
+                  column(
+                    3,
+                    radioButtons(
+                      "file1_input",
+                      label = "Do you want to include file 1:",
+                      choices = c("SI" = TRUE, "NO" = FALSE)
+                    )
+                  ),
+                  column(
+                    3,
+                    radioButtons(
+                      "file2_input",
+                      label = "Do you want to include file 2:",
+                      choices = c("SI" = TRUE, "NO" = FALSE)
+                    )
+                  ),
+                  column(
+                    3,
+                    radioButtons(
+                      "file3_input",
+                      label = "Do you want to include file 3:",
+                      choices = c("SI" = TRUE, "NO" = FALSE)
+                    )
+                  )
+                ),
+                fluidRow(
+                  column(
+                    3,
+                    radioButtons(
+                      "plot1_input",
+                      label = "Do you want to include well-plot file 1:",
+                      choices = c("SI" = TRUE, "NO" = FALSE)
+                    )
+                  ),
+                  column(
+                    3,
+                    radioButtons(
+                      "plot2_input",
+                      label = "Do you want to include well-plot file 2:",
+                      choices = c("SI" = TRUE, "NO" = FALSE)
+                    )
+                  ),
+                  column(
+                    3,
+                    radioButtons(
+                      "plot3_input",
+                      label = "Do you want to include well-plot file 3:",
+                      choices = c("SI" = TRUE, "NO" = FALSE)
+                    )
+                  )
+                ),fluidRow(column(
                   width = 3,
-      downloadButton(
-        outputId = "report_gen",
-        label = "Create my report"
-      )
-                )))
-      )
+                  downloadButton(outputId = "report_gen",
+                                 label = "Create my report")
+                ))
+              ))
     )
   )
 )
-  
