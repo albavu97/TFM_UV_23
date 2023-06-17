@@ -5,6 +5,11 @@ require(ggforce)
 require(scales)
 
 server <- function(input, output, session) {
+  # initialize reactiveValues object that will contain the plots/data that we will
+  # pass to the R Markdown document
+  my_vals <- reactiveValues()
+  
+  
   output$menuitem <- renderMenu({
     menuItem("Menu item", icon = icon("calendar"))
   })
@@ -28,6 +33,8 @@ server <- function(input, output, session) {
   
   dir <- reactive(input$dir)
   
+  file1_df <- reactive(input$file1_input)
+  
   render1 <- reactive({
     output$contents <- renderDT({
       datatable(
@@ -47,7 +54,6 @@ server <- function(input, output, session) {
       )
     })
   })
-  
   render2 <- reactive({
     output$contents2 <- renderDT({
       datatable(
@@ -88,6 +94,10 @@ server <- function(input, output, session) {
     })
   })
   
+  df_select <- reactive({
+    input$DF_select
+  })
+  
   
   
   observeEvent(ignoreNULL = TRUE,
@@ -108,12 +118,22 @@ server <- function(input, output, session) {
                    titleUpdate1()
                    render1()
                    update_function1(1)
+                   if (is.element(global$lista[1],df_select())) {
+                   # to pass to markdown incase we need the full dataset
+                   my_vals$dat_table <- csvs(1)
+                   }
                  } else if (length(global$lista) == 2) {
                    titleUpdate2()
                    render1()
                    render2()
                    update_function1(1)
                    update_function1(2)
+                   output$DF_select2 <- renderText({ file1_df() })
+                   if (file1_df() == "SI") {
+                     # to pass to markdown incase we need the full dataset
+                     my_vals$dat_table2 <- csvs(2)
+                   }
+                   # to pass to markdown incase we need the full dataset
                  } else if (length(global$lista) == 3) {
                    titleUpdate3()
                    render1()
@@ -122,6 +142,8 @@ server <- function(input, output, session) {
                    update_function1(1)
                    update_function1(2)
                    update_function1(3)
+                   # to pass to markdown incase we need the full dataset
+                   my_vals$dat_table <- csvs(1)
                  }
                  else if (length(global$lista) == 0) {
                    shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
@@ -144,7 +166,7 @@ server <- function(input, output, session) {
     #   data.table = FALSE
     # )
     #Quitamos la columna Name para que no haya problemas
-    tmp2 <- tmp[, !(names(tmp) %in% "Name")]
+    tmp2 <- tmp[,!(names(tmp) %in% "Name")]
     tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
       gsub(",", ".", x)
     })
@@ -193,6 +215,13 @@ server <- function(input, output, session) {
       inputId = paste0('cpSelect', number),
       label = 'Select the cp',
       choices  = c("", csvs(number)$Cp),
+      selected = NULL
+    )
+    updateSelectizeInput(
+      session,
+      inputId = paste0('DF_select'),
+      label = 'Select wich dataframe you want (1 or more):',
+      choices  = global$lista,
       selected = NULL
     )
   }
@@ -253,6 +282,7 @@ server <- function(input, output, session) {
     update_function1(3)
     datafile3()
   })
+  
   
   
   #   ###############################
@@ -479,7 +509,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
     #merged_df$Cp = as.numeric(levels(merged_df$Cp))[merged_df$Cp]
     merged_df
   }
@@ -598,7 +628,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
     options(scipen = 999)
     merged_df$Concentration <- as.numeric(merged_df$Concentration)
     merged_df
@@ -859,20 +889,60 @@ server <- function(input, output, session) {
                  })
                  output$graph2 <- renderPlotly({
                    fig <- plot_ly(type = "box")
-                   fig <- fig %>% add_boxplot(y = render_big_plot()$Cp, name = "Suspected Outlier", boxpoints = 'suspectedoutliers',
-                                              marker = list(color = 'rgb(8,81,156)',
-                                                            outliercolor = 'rgba(219, 64, 82, 0.6)',
-                                                            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                                                                        outlierwidth = 2)),
-                                              line = list(color = 'rgb(8,81,156)'))
+                   fig <-
+                     fig %>% add_boxplot(
+                       y = render_big_plot()$Cp,
+                       name = "Suspected Outlier",
+                       boxpoints = 'suspectedoutliers',
+                       marker = list(
+                         color = 'rgb(8,81,156)',
+                         outliercolor = 'rgba(219, 64, 82, 0.6)',
+                         line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                                     outlierwidth = 2)
+                       ),
+                       line = list(color = 'rgb(8,81,156)')
+                     )
                    fig <- fig %>% layout(title = type_file())
                  })
                  output$number_txt <- renderText({
                    global2$lista
                  })
                })
-
   
+  output$report_gen <- downloadHandler(
+    filename = "sample_report.pdf",
+    content = function(file) {
+      # copy markdown report file to a temporary directory before knitting it with the
+      # selected dataset. This is useful if we don't have write permissions for the current
+      # working directory
+      temp_report <-
+        file.path("/Users/valleja3/Desktop/TFM_UV_23/TFM_app/template.Rmd")
+      message("\n... temp_report path: ", temp_report, "\n")
+      
+      # copy the report template into the temp directory
+      file.copy(
+        here::here("shiny_report_gen", "report_template.Rmd"),
+        temp_report,
+        overwrite = TRUE
+      )
+      
+      # create a named list of parameters to pass to to Rmd template.
+      # can also pass reactiveValues or reactive objects
+      pass_params <- list(imported = my_vals)
+      
+      # knit the document, passing in the `pass_params` list, and evaluate it in a
+      # child of the global environment (this isolates the code in the document
+      # from the code in the app).
+      rmarkdown::render(
+        temp_report,
+        output_file = file,
+        params = pass_params,
+        envir = new.env(parent = globalenv())
+      )
+      
+    }
+    
+  )
   
   observeEvent(input$reset11, {
     output$number_txt <- NULL

@@ -59,7 +59,10 @@ ui <- dashboardPage(
       ),
       menuItem("Plot",
                tabName = "plot_all",
-               icon = icon("hand"))
+               icon = icon("hand")),
+      menuItem("Report",
+               tabName = "report",
+               icon = icon("download"))
     )
   ),
   dashboardBody(
@@ -399,7 +402,31 @@ ui <- dashboardPage(
                     plotlyOutput("graph2")
                   )
                 
-              )))
+              ))),
+      tabItem("report",
+              fluidPage(fluidRow(
+                column(3,
+                       selectizeInput("DF_select",
+                                      "",
+                                      "",
+                                      selected = NULL,
+                                      multiple = TRUE),
+                       radioButtons(
+                         "file1_input",
+                         label = "Do you want to include file 1:",
+                         choices = c("SI" = "SI", "NO" = "NO"),
+                         selected = NULL
+                       ),
+                       verbatimTextOutput("DF_select2", placeholder = TRUE)
+              )),fluidRow(
+                column(
+                  width = 3,
+      downloadButton(
+        outputId = "report_gen",
+        label = "Create my report"
+      )
+                )))
+      )
     )
   )
 )
