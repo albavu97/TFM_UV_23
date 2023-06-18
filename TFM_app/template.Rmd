@@ -1,6 +1,6 @@
 ---
-title: "template"
-date: "`r Sys.time()`"
+title: "Informe datos qPCR neonatos"
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
 output: pdf_document
 header-includes:
   \usepackage{fancyhdr}
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = FALSE)
 \fancypagestyle{plain}{} 
 \pagestyle{fancy} 
 \fancyhead[R]{\includegraphics[width = 80pt]{logoRoche2.jpg}}
-\lhead[L]{Google - Google PD - \today}
+\lhead[L]{`r params$imported$autor` - \today}
 \renewcommand{\headrulewidth}{0.4pt} 
 \renewcommand{\footrulewidth}{0.4pt}
 
@@ -32,7 +32,7 @@ if(var1 == "FALSE"){
 }else{
   show_text <- TRUE
 }
-if(var2 == "FALSE"){
+if(var2 == "FALSE"| length(params$imported$lista)<2){
   show_text2 <- FALSE
 }else{
   show_text2 <- TRUE
@@ -51,15 +51,26 @@ if(plot1 == "FALSE"){
 }else{
   show_plot <- TRUE
 }
-if(plot2 == "FALSE"){
+if(plot2 == "FALSE" | length(params$imported$lista)<2){
   show_plot2 <- FALSE
 }else{
   show_plot2 <- TRUE
 }
-if(plot3 == "FALSE"){
+if(plot3 == "FALSE"| length(params$imported$lista)<3){
   show_plot3 <- FALSE
 }else{
   show_plot3 <- TRUE
+}
+
+if(length(params$imported$lista)==1){
+  show_plot_unique <- TRUE
+}else{
+  show_plot_unique <- FALSE
+}
+if(params$imported$comment == "Comments"){
+  show_comment <- FALSE
+}else{
+  show_comment <- TRUE
 }
 ```
 
@@ -185,8 +196,71 @@ ggplot(data = params$imported$boxplot3) +
       theme_bw()
 ```
 
-``` {r boxplot_long, echo=FALSE, eval=show_plot3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+``` {r boxplot_long, echo=FALSE,eval=show_plot_unique, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
 cat("## Box plot 3 archivos")
 
-boxplot(params$imported$cp1)
+var1 <- params$imported$lista[1]
+
+
+cp1 <- as.numeric(gsub(",", ".", params$imported$cp1))
+
+
+data3 <- data.frame(A=cp1)
+colnames(data3) <- c(var1)
+
+boxplot(data3,
+        main="Box Plot of Cp of different files",
+        xlab="files",
+        ylab="Cp",
+        col=c("blue","orange","green"))
+
 ```
+
+``` {r boxplot_long2, echo=FALSE,eval=show_plot2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+var1 <- params$imported$lista[1]
+var2 <- params$imported$lista[2]
+
+cp1 <- as.numeric(gsub(",", ".", params$imported$cp1))
+cp2 <- as.numeric(gsub(",", ".", params$imported$cp2))
+
+data3 <- data.frame(A=cp1,
+                    B=cp2)
+colnames(data3) <- c(var1,var2)
+
+boxplot(data3,
+        main="Box Plot of Cp of different files",
+        xlab="files",
+        ylab="Cp",
+        col=c("blue","orange","green"))
+```
+
+``` {r boxplot_long3, echo=FALSE,eval=show_plot3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
+var1 <- params$imported$lista[1]
+var2 <- params$imported$lista[2]
+var3 <- params$imported$lista[3]
+
+cp1 <- as.numeric(gsub(",", ".", params$imported$cp1))
+cp2 <- as.numeric(gsub(",", ".", params$imported$cp2))
+cp3 <- as.numeric(gsub(",", ".", params$imported$cp3))
+
+data3 <- data.frame(A=cp1,
+                    B=cp2,
+                    C=cp3)
+colnames(data3) <- c(var1,var2,var3)
+
+boxplot(data3,
+        main="Box Plot of Cp of different files",
+        xlab="files",
+        ylab="Cp",
+        col=c("blue","orange","green"))
+
+```
+
+``` {r comment1, echo=FALSE,eval=show_comment, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}  
+cat("## Comentarios introducidos:")
+cat("\n")
+
+cat(params$imported$comment)
+
+```
+

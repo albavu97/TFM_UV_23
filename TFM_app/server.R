@@ -117,19 +117,22 @@ server <- function(input, output, session) {
                    # Values for markdown template
                    my_vals$dat_table <- csvs(1)
                    my_vals$boxplot <- ldf1(1)
-                   
+                   plot_big()
+                   my_vals$cp1 <- csvs(1)$Cp
                  } else if (length(global$lista) == 2) {
                    titleUpdate2()
                    render1()
                    render2()
                    update_function1(1)
                    update_function1(2)
-                   
+                   plot_big()
                    # Values for markdown template
                    my_vals$dat_table <- csvs(1)
                    my_vals$boxplot <- ldf1(1)
                    my_vals$dat_table2 <- csvs(2)
                    my_vals$boxplot2 <- ldf1(2)
+                   my_vals$cp1 <- csvs(1)$Cp
+                   my_vals$cp2 <- csvs(2)$Cp
                    # to pass to markdown incase we need the full dataset
                  } else if (length(global$lista) == 3) {
                    titleUpdate3()
@@ -151,7 +154,7 @@ server <- function(input, output, session) {
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
                    my_vals$cp3 <- csvs(3)$Cp
-                   
+                   plot_big()
                  }
                  else if (length(global$lista) == 0) {
                    shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
@@ -775,6 +778,9 @@ server <- function(input, output, session) {
       ) +
       theme_bw()
   })
+ 
+  plot_big <- reactive({ 
+ if (length(global$lista)==3){
   
   output$graph <- renderPlotly({
     fig <- plot_ly(type = "box")
@@ -811,6 +817,48 @@ server <- function(input, output, session) {
       )
     fig <- fig %>% layout(title = "Box Plot Styling Outliers")
     
+  })
+  }else if (length(global$lista)==2){
+    output$graph <- renderPlotly({
+      fig <- plot_ly(type = "box")
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(1)$Cp,
+          jitter = 0.3,
+          pointpos = -1.8,
+          boxpoints = 'all',
+          marker = list(color = 'rgb(7,40,89)'),
+          line = list(color = 'rgb(7,40,89)'),
+          name = global$lista[1]
+        )
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(2)$Cp,
+          name = global$lista[2],
+          boxpoints = FALSE,
+          marker = list(color = 'rgb(9,56,125)'),
+          line = list(color = 'rgb(9,56,125)')
+        )
+      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      
+    })
+  }else if(length(global$lista)==1){
+    output$graph <- renderPlotly({
+      fig <- plot_ly(type = "box")
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(1)$Cp,
+          jitter = 0.3,
+          pointpos = -1.8,
+          boxpoints = 'all',
+          marker = list(color = 'rgb(7,40,89)'),
+          line = list(color = 'rgb(7,40,89)'),
+          name = global$lista[1]
+        )
+      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      
+    })
+  }
   })
   
   ### TABLA Y GRAFICO DE TODOS LOS ARCHIVOS ###
@@ -927,6 +975,9 @@ server <- function(input, output, session) {
       my_vals$plot1 <- input$plot1_input
       my_vals$plot2 <- input$plot2_input
       my_vals$plot3 <- input$plot3_input
+      #Get comments
+      my_vals$comment <- input$comment
+      my_vals$autor <- input$autor
       # copy markdown report file to a temporary directory before knitting it with the
       # selected dataset. This is useful if we don't have write permissions for the current
       # working directory
@@ -978,6 +1029,7 @@ server <- function(input, output, session) {
     output$plot1 <- NULL
     output$plot2 <- NULL
     output$plot3 <- NULL
+    output$graph <- NULL
   })
   
   

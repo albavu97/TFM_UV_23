@@ -95,11 +95,8 @@ ui <- dashboardPage(
                 
                 textInput("fileId", "Input File ID", width = "100%")),
             div(style = "height:40px;background-color: transparent;"),
-            div(
-              style = "height:40px;background-color: transparent;",
-              column(
-                width = 4,
-                offset = 4,
+              div(
+                style = "height:40px;background-color: transparent;text-align:center",
                 tags$style(
                   ".btn-default{
   background-color: #2CA666;
@@ -115,8 +112,7 @@ ui <- dashboardPage(
                   icon = icon("folder"),
                   viewtype = "detail"
                 )
-              )
-            ),
+              ),
             div(style = "height:20px;background-color: transparent;"),
             div(
               style = "height:40px;background-color: transparent;text-align:center",
@@ -459,7 +455,14 @@ ui <- dashboardPage(
                       choices = c("SI" = TRUE, "NO" = FALSE)
                     )
                   )
-                ),fluidRow(column(
+                ),
+                fluidRow(column(
+                  width = 8,
+                  textAreaInput("comment", "Comments to include in report", "Comments", width = "1000px",height = "200px"))),
+                fluidRow(column(
+                  width = 6,
+                  textAreaInput("autor", "Autor", width = "400px",height = "40px"))),
+                fluidRow(column(
                   width = 3,
                   downloadButton(outputId = "report_gen",
                                  label = "Create my report")
