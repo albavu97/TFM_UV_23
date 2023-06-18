@@ -80,7 +80,7 @@ ui <- dashboardPage(
                 background-color: transparent;text-align:center",
           box(
             img(
-              src = 'baby_yoda.png',
+              src = 'logo_uni.png',
               align = "center",
               style = paste0("max-width: 100%; height: ", my_height, ";")
             ),
