@@ -93,6 +93,18 @@ server <- function(input, output, session) {
     })
   })
   
+  observeEvent(ignoreNULL = TRUE,
+               eventExpr = {
+                 input$type_plot
+               },
+               handlerExpr = {
+    if(input$type_plot =="boxplot"){
+      plot_big()
+    }else{
+      plot_bigotes()
+    }
+  })
+  
   
   
   observeEvent(ignoreNULL = TRUE,
@@ -155,7 +167,6 @@ server <- function(input, output, session) {
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
                    my_vals$cp3 <- csvs(3)$Cp
-                   plot_big()
                  }
                  else if (length(global$lista) == 0) {
                    shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
@@ -178,7 +189,7 @@ server <- function(input, output, session) {
     #   data.table = FALSE
     # )
     #Quitamos la columna Name para que no haya problemas
-    tmp2 <- tmp[,!(names(tmp) %in% "Name")]
+    tmp2 <- tmp[, !(names(tmp) %in% "Name")]
     tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
       gsub(",", ".", x)
     })
@@ -521,7 +532,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
     #merged_df$Cp = as.numeric(levels(merged_df$Cp))[merged_df$Cp]
     merged_df
   }
@@ -640,7 +651,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
     options(scipen = 999)
     merged_df$Concentration <- as.numeric(merged_df$Concentration)
     merged_df
@@ -779,87 +790,130 @@ server <- function(input, output, session) {
       ) +
       theme_bw()
   })
- 
-  plot_big <- reactive({ 
- if (length(global$lista)==3){
   
-  output$graph <- renderPlotly({
-    fig <- plot_ly(type = "box")
-    fig <-
-      fig %>% add_boxplot(
-        y = csvs(1)$Cp,
-        jitter = 0.3,
-        pointpos = -1.8,
-        boxpoints = 'all',
-        marker = list(color = 'rgb(7,40,89)'),
-        line = list(color = 'rgb(7,40,89)'),
-        name = global$lista[1]
-      )
-    fig <-
-      fig %>% add_boxplot(
-        y = csvs(2)$Cp,
-        name = global$lista[2],
-        boxpoints = FALSE,
-        marker = list(color = 'rgb(9,56,125)'),
-        line = list(color = 'rgb(9,56,125)')
-      )
-    fig <-
-      fig %>% add_boxplot(
-        y = csvs(3)$Cp,
-        name = global$lista[3],
-        boxpoints = 'suspectedoutliers',
-        marker = list(
-          color = 'rgb(8,81,156)',
-          outliercolor = 'rgba(219, 64, 82, 0.6)',
-          line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                      outlierwidth = 2)
-        ),
-        line = list(color = 'rgb(8,81,156)')
-      )
-    fig <- fig %>% layout(title = "Box Plot Styling Outliers")
-    
+  plot_bigotes <- reactive({
+    if (length(global$lista) == 3) {
+      output$graph_bigotes <- renderPlotly({
+        fig <- plot_ly(type = 'violin')
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(1)$Cp,
+            legendgroup = 'M',
+            scalegroup = 'M',
+            name = global$lista[1],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I("blue")
+          )
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(2)$Cp,
+            legendgroup = 'F',
+            scalegroup = 'F',
+            name = global$lista[2],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I("pink")
+          )
+        
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(3)$Cp,
+            legendgroup = 'G',
+            scalegroup = 'G',
+            name = global$lista[3],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I("green")
+          )
+        
+        fig <- fig %>%
+          layout(yaxis = list(zeroline = F),
+                 violinmode = 'group')
+        
+      })
+    }
   })
-  }else if (length(global$lista)==2){
-    output$graph <- renderPlotly({
-      fig <- plot_ly(type = "box")
-      fig <-
-        fig %>% add_boxplot(
-          y = csvs(1)$Cp,
-          jitter = 0.3,
-          pointpos = -1.8,
-          boxpoints = 'all',
-          marker = list(color = 'rgb(7,40,89)'),
-          line = list(color = 'rgb(7,40,89)'),
-          name = global$lista[1]
-        )
-      fig <-
-        fig %>% add_boxplot(
-          y = csvs(2)$Cp,
-          name = global$lista[2],
-          boxpoints = FALSE,
-          marker = list(color = 'rgb(9,56,125)'),
-          line = list(color = 'rgb(9,56,125)')
-        )
-      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
-      
-    })
-  }else if(length(global$lista)==1){
-    output$graph <- renderPlotly({
-      fig <- plot_ly(type = "box")
-      fig <-
-        fig %>% add_boxplot(
-          y = csvs(1)$Cp,
-          jitter = 0.3,
-          pointpos = -1.8,
-          boxpoints = 'all',
-          marker = list(color = 'rgb(7,40,89)'),
-          line = list(color = 'rgb(7,40,89)'),
-          name = global$lista[1]
-        )
-      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
-      
-    })
-  }
+  
+  plot_big <- reactive({
+    if (length(global$lista) == 3) {
+      output$graph <- renderPlotly({
+        fig <- plot_ly(type = "box")
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(1)$Cp,
+            jitter = 0.3,
+            pointpos = -1.8,
+            boxpoints = 'all',
+            marker = list(color = 'rgb(7,40,89)'),
+            line = list(color = 'rgb(7,40,89)'),
+            name = global$lista[1]
+          )
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(2)$Cp,
+            name = global$lista[2],
+            boxpoints = FALSE,
+            marker = list(color = 'rgb(9,56,125)'),
+            line = list(color = 'rgb(9,56,125)')
+          )
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(3)$Cp,
+            name = global$lista[3],
+            boxpoints = 'suspectedoutliers',
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
+            line = list(color = 'rgb(8,81,156)')
+          )
+        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+        
+      })
+    } else if (length(global$lista) == 2) {
+      output$graph <- renderPlotly({
+        fig <- plot_ly(type = "box")
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(1)$Cp,
+            jitter = 0.3,
+            pointpos = -1.8,
+            boxpoints = 'all',
+            marker = list(color = 'rgb(7,40,89)'),
+            line = list(color = 'rgb(7,40,89)'),
+            name = global$lista[1]
+          )
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(2)$Cp,
+            name = global$lista[2],
+            boxpoints = FALSE,
+            marker = list(color = 'rgb(9,56,125)'),
+            line = list(color = 'rgb(9,56,125)')
+          )
+        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+        
+      })
+    } else if (length(global$lista) == 1) {
+      output$graph <- renderPlotly({
+        fig <- plot_ly(type = "box")
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(1)$Cp,
+            jitter = 0.3,
+            pointpos = -1.8,
+            boxpoints = 'all',
+            marker = list(color = 'rgb(7,40,89)'),
+            line = list(color = 'rgb(7,40,89)'),
+            name = global$lista[1]
+          )
+        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+        
+      })
+    }
   })
   
   ### TABLA Y GRAFICO DE TODOS LOS ARCHIVOS ###

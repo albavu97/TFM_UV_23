@@ -345,11 +345,25 @@ ui <- dashboardPage(
                          )))
               )),
       tabItem(tabName = "plot",
-              tabBox(
-                width = 12,
-                tabPanel(title = "Box Plot",
-                         plotlyOutput("graph"))
-              )),
+              fluidPage(
+                fluidRow(
+                  column(3,
+                         selectInput(
+                           "type_plot",
+                           label = "Select type of plot",
+                           selected = NULL,
+                           choices = c(
+                             " " = "NULL",
+                             "Box Plot" = "boxplot",
+                             "Violin" = "violin"
+                           )
+                         )),
+                  column(9,
+                         plotlyOutput("graph"),
+                         div(style = "height:10px;background-color: transparent;"),
+                plotlyOutput("graph_bigotes"))
+              ))
+              ),
       tabItem(tabName = "plot_all",
               fluidPage(
                 fluidRow(
