@@ -98,12 +98,12 @@ server <- function(input, output, session) {
                  input$type_plot
                },
                handlerExpr = {
-    if(input$type_plot =="boxplot"){
-      plot_big()
-    }else{
-      plot_bigotes()
-    }
-  })
+                 if (input$type_plot == "boxplot") {
+                   plot_big()
+                 } else{
+                   plot_bigotes()
+                 }
+               })
   
   
   
@@ -121,24 +121,23 @@ server <- function(input, output, session) {
                    list.files(global$datapath,
                               pattern = global$file,
                               recursive = TRUE)
-                 shinyalert("All files upload!", global$lista, type = "info")
                  my_vals$lista <- global$lista
                  if (length(global$lista) == 1) {
+                   shinyalert("All files upload!", global$lista, type = "info")
                    titleUpdate1()
                    render1()
                    update_function1(1)
                    # Values for markdown template
                    my_vals$dat_table <- csvs(1)
                    my_vals$boxplot <- ldf1(1)
-                   plot_big()
                    my_vals$cp1 <- csvs(1)$Cp
                  } else if (length(global$lista) == 2) {
+                   shinyalert("All files upload!", global$lista, type = "info")
                    titleUpdate2()
                    render1()
                    render2()
                    update_function1(1)
                    update_function1(2)
-                   plot_big()
                    # Values for markdown template
                    my_vals$dat_table <- csvs(1)
                    my_vals$boxplot <- ldf1(1)
@@ -148,6 +147,7 @@ server <- function(input, output, session) {
                    my_vals$cp2 <- csvs(2)$Cp
                    # to pass to markdown incase we need the full dataset
                  } else if (length(global$lista) == 3) {
+                   shinyalert("All files upload!", global$lista, type = "info")
                    titleUpdate3()
                    render1()
                    render2()
@@ -189,7 +189,7 @@ server <- function(input, output, session) {
     #   data.table = FALSE
     # )
     #Quitamos la columna Name para que no haya problemas
-    tmp2 <- tmp[, !(names(tmp) %in% "Name")]
+    tmp2 <- tmp[,!(names(tmp) %in% "Name")]
     tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
       gsub(",", ".", x)
     })
@@ -532,7 +532,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
     #merged_df$Cp = as.numeric(levels(merged_df$Cp))[merged_df$Cp]
     merged_df
   }
@@ -651,7 +651,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
     options(scipen = 999)
     merged_df$Concentration <- as.numeric(merged_df$Concentration)
     merged_df
@@ -832,8 +832,54 @@ server <- function(input, output, session) {
                  violinmode = 'group')
         
       })
-    }
-  })
+    } else if (length(global$lista) == 2) {
+      output$graph_bigotes <- renderPlotly({
+        fig <- plot_ly(type = 'violin')
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(1)$Cp,
+            legendgroup = 'M',
+            scalegroup = 'M',
+            name = global$lista[1],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I("blue")
+          )
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(2)$Cp,
+            legendgroup = 'F',
+            scalegroup = 'F',
+            name = global$lista[2],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I("pink")
+          )
+        fig <- fig %>%
+          layout(yaxis = list(zeroline = F),
+                 violinmode = 'group')
+        
+      })
+    } else if (length(global$lista) == 1) {
+      output$graph_bigotes <- renderPlotly({
+        fig <- plot_ly(type = 'violin')
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(1)$Cp,
+            legendgroup = 'M',
+            scalegroup = 'M',
+            name = global$lista[1],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I("blue")
+          )
+        
+        fig <- fig %>%
+          layout(yaxis = list(zeroline = F),
+                 violinmode = 'group')
+        
+      })
+    }})
   
   plot_big <- reactive({
     if (length(global$lista) == 3) {
@@ -1089,4 +1135,4 @@ server <- function(input, output, session) {
   
   
   
-}
+  }
