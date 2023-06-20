@@ -109,6 +109,7 @@ server <- function(input, output, session) {
                    list.files(global$datapath,
                               pattern = global$file,
                               recursive = TRUE)
+                 shinyalert("All files upload!", global$lista, type = "info")
                  my_vals$lista <- global$lista
                  if (length(global$lista) == 1) {
                    titleUpdate1()
