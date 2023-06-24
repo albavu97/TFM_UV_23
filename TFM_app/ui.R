@@ -6,29 +6,33 @@ library(shinythemes)
 library(shinyBS)
 library(htmltools)
 library(DT)
+library(shinyalert)
+library(dipsaus)
+library(shinyjs)
+library(colourpicker)
+library(shinyFiles)
+library(plotly)
+
+my_height = "100px"
 
 fileInputOnlyButton <- function(..., label = "") {
   temp <- fileInput(
-    inputId = "selection",
-    label = "Upload Files:",
+    inputId = "csvs",
+    label = "change",
     multiple = T,
+    buttonLabel = "Upload files",
     accept = c(
       ".xls",
       "text/csv",
       "text/comma-separated-values, text/plain",
-      ".csv"
+      ".csv",
+      ".18"
     )
   )
-  # Cut away the label
   temp$children[[1]] <- NULL
-  # Cut away the input field (after label is cut, this is position 1 now)
   temp$children[[1]]$children[[2]] <- NULL
-  # Remove input group classes (makes button flat on one side)
-  # temp$children[[1]]$attribs$class <- NULL
-  # temp$children[[1]]$children[[1]]$attribs$class <- NULL
   temp
 }
-
 
 ui <- dashboardPage(
   skin = "yellow",
@@ -37,112 +41,513 @@ ui <- dashboardPage(
     height = 40,
     width = 90
   )),
-  dashboardSidebar(sidebarMenu(
-    menuItem(
-      "Dashboard",
-      tabName = "dashboard",
-      icon = icon("dashboard")
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Home",
+               tabName = "home",
+               icon = icon("house")),
+      menuItem("Dashboard",
+               tabName = "dashboard",
+               icon = icon("table")),
+      menuItem("Well plate",
+               tabName = "cell",
+               icon = icon("flask")),
+      menuItem(
+        "Distribution plots",
+        tabName = "plot",
+        icon = icon("chart-simple")
+      ),
+      menuItem(
+        "Biomarker summary",
+        tabName = "plot_all",
+        icon = icon("hand")
+      ),
+      menuItem("Report",
+               tabName = "report",
+               icon = icon("download"))
     )
-  )),
-  dashboardBody(tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
   ),
-  tabItems(
-    tabItem(
-      tabName = "dashboard",
-      fluidRow(box(
-        title = "Title 1",
-        width = 3,
-        solidHeader = TRUE,
-        status = "primary",
-        selectInput('myselectinput','Select the first var', "")
-      ),
-      box(
-        title = "Title 2",
-        width = 3,
-        solidHeader = TRUE,
-        status = "primary",
-        selectizeInput("NameSelect", "Cut", "",selected = NULL, multiple = TRUE),
-      ),
-      box(
-        title = "Title 3",
-        width = 3,
-        solidHeader = TRUE,
-        status = "primary",
-        selectInput('myselectinput','Select the first var', "")
-      ),
-        box(
-          title = p(
-            "Title 1",
-            actionButton(
-              "titleBtId",
-              "",
-              icon = icon("refresh"),
-              class = "btn-xs",
-              title = "Update"
+  dashboardBody(
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
+    ),
+    tabItems(
+      tabItem(
+        tabName = "home",
+        fluidRow(column(
+          12, div(style = "height:200px;background-color: transparent;")
+        )),
+        div(
+          style = "margin-rigth: 30%;margin-left: 30%;width:40%;height:100px;
+                background-color: transparent;text-align:center",
+          box(
+            img(
+              src = 'logo_uni.png',
+              align = "center",
+              style = paste0("max-width: 100%; height: ", my_height, ";")
+            ),
+            div(style = "height:10px;background-color: transparent;"),
+            div(
+              style = "height:40px;background-color: transparent;text-align:center",
+              fileInputOnlyButton("csvs", label = "Upload files"),
+              tags$style(".shiny-file-input-progress {display: none}")
+            ),
+            div(style = "height:10px;background-color: transparent;"),
+            div(style = "height:40px;background-color: transparent;text-align:center",
+                
+                textInput("fileId", "Input File ID", width = "100%")),
+            div(style = "height:40px;background-color: transparent;"),
+            div(
+              style = "height:40px;background-color: transparent;text-align:center",
+              tags$style(
+                ".btn-default{
+  background-color: #2CA666;
+    color: white;
+    border-color: black;
+    font-weight: bold;
+}"
+              ),
+              shinyDirButton(
+                "dir",
+                "Input directory",
+                "Upload",
+                icon = icon("folder"),
+                viewtype = "detail"
+              )
+            ),
+            div(style = "height:20px;background-color: transparent;"),
+            div(
+              style = "height:40px;background-color: transparent;text-align:center",
+              actionButtonStyled(
+                "reset",
+                "Reset input",
+                icon = icon("house"),
+                width = "110px",
+                type = "info"
+              )
+            ),
+            div(style = "height:10px;background-color: transparent;"),
+            width = 12,
+            solidHeader = TRUE
+          )
+          
+        )
+      )
+      
+      ,
+      tabItem(tabName = "dashboard",
+              fluidRow(
+                tags$style(
+                  "
+             .btn-file {
+             background-color:black;
+             border-color: white;
+             color:white;
+             display: inline-block;
+             font-size: 16px;
+             font-weight: bold;
+             vertical-align: middle;
+             }
+
+             .progress-bar {
+             visibility: hidden;
+             background-color:white;
+             width: 100px;
+             color:black;
+             }
+
+             "
+                ),
+                tabBox(
+                  width = 12,
+                  tabPanel(
+                    title = textOutput("title1"),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "blue",
+                      status = "primary",
+                      selectInput('cpSelect1', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "orange",
+                      status = "warning",
+                      selectInput('colorInput1', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "green",
+                      status = "info",
+                      selectizeInput("PosSelect1",
+                                     "",
+                                     "",
+                                     selected = NULL,
+                                     multiple = TRUE)
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      div(
+                        style = "height:40px;background-color: transparent;text-align:center",
+                        actionButtonStyled(
+                          "reset2",
+                          "Reset input",
+                          icon = icon("house"),
+                          width = "110px",
+                          type = "info"
+                        )
+                      ),
+                    ),
+                    style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                    DTOutput('contents', width = "98%", height = "98%"),
+                    div(style = "height:20px;background-color: transparent;"),
+                    textAreaInput(
+                      "comment_data1",
+                      "Comments to include in report",
+                      "Comments",
+                      width = "1000px",
+                      height = "100px"
+                    )
+                  ),
+                  tabPanel(
+                    title = textOutput("title2"),
+                    style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "blue",
+                      status = "primary",
+                      selectInput('cpSelect2', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "orange",
+                      status = "warning",
+                      selectInput('colorInput2', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "green",
+                      status = "info",
+                      selectizeInput("PosSelect2",
+                                     "",
+                                     "",
+                                     selected = NULL,
+                                     multiple = TRUE)
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      div(
+                        style = "height:40px;background-color: transparent;text-align:center",
+                        actionButtonStyled(
+                          "reset3",
+                          "Reset input",
+                          icon = icon("house"),
+                          width = "110px",
+                          type = "info"
+                        )
+                      ),
+                    ),
+                    DTOutput('contents2', width = "98%", height = "98%"),
+                    div(style = "height:20px;background-color: transparent;"),
+                    textAreaInput(
+                      "comment_data2",
+                      "Comments to include in report",
+                      "Comments",
+                      width = "1000px",
+                      height = "100px"
+                    )
+                  ),
+                  tabPanel(
+                    title = textOutput("title3"),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "blue",
+                      status = "primary",
+                      selectInput('cpSelect3', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "orange",
+                      status = "warning",
+                      selectInput('colorInput3', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "green",
+                      status = "info",
+                      selectizeInput("PosSelect3",
+                                     "",
+                                     "",
+                                     selected = NULL,
+                                     multiple = TRUE)
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      div(
+                        style = "height:40px;background-color: transparent;text-align:center",
+                        actionButtonStyled(
+                          "reset4",
+                          "Reset input",
+                          icon = icon("house"),
+                          width = "110px",
+                          type = "info"
+                        )
+                      ),
+                    ),
+                    style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                    DTOutput('contents3', width = "98%", height = "98%"),
+                    div(style = "height:20px;background-color: transparent;"),
+                    textAreaInput(
+                      "comment_data3",
+                      "Comments to include in report",
+                      "Comments",
+                      width = "1000px",
+                      height = "100px"
+                    )
+                  )
+                )
+              )),
+      tabItem(tabName = "cell",
+              tabBox(
+                width = 12,
+                tabPanel(title = textOutput("title4"),
+                         fluidPage(fluidRow(
+                           column(
+                             width = 3,
+                             radioButtons(
+                               "var2plot",
+                               label = "Select value to plot",
+                               choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                             ),
+                           ),
+                           #End column inputs
+                           column(width = 8,
+                                  #img(src = "images/96-well plot 1.png", width = "99%"),
+                                  #img(src = "images/96-well plot 2.png", width = "99%")
+                                  plotOutput("plot1"), )
+                         ))),
+                tabPanel(title = textOutput("title5"),
+                         fluidPage(fluidRow(
+                           column(
+                             width = 3,
+                             radioButtons(
+                               "var3plot",
+                               label = "Select value to plot",
+                               choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                             ),
+                           ),
+                           #End column inputs
+                           column(width = 8,
+                                  #img(src = "images/96-well plot 1.png", width = "99%"),
+                                  #img(src = "images/96-well plot 2.png", width = "99%")
+                                  plotOutput("plot2"), )
+                         ))),
+                tabPanel(title = textOutput("title6"),
+                         fluidPage(fluidRow(
+                           column(
+                             width = 3,
+                             radioButtons(
+                               "var4plot",
+                               label = "Select value to plot",
+                               choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                             ),
+                           ),
+                           #End column inputs
+                           column(width = 8,
+                                  #img(src = "images/96-well plot 1.png", width = "99%"),
+                                  #img(src = "images/96-well plot 2.png", width = "99%")
+                                  plotOutput("plot3"), )
+                         )))
+              )),
+      tabItem(tabName = "plot",
+              fluidPage(fluidRow(
+                column(
+                  3,
+                  selectInput(
+                    "type_plot",
+                    label = "Select type of plot",
+                    selected = NULL,
+                    choices = c(
+                      " " = "NULL",
+                      "Box Plot" = "boxplot",
+                      "Violin" = "violin"
+                    )
+                  ),
+                  colourInput("col1", "Fill color first file:", "yellow"),
+                  colourInput("col2", "Fill color second file:", "green"),
+                  colourInput("col3", "Fill color third file:", "orange"),
+                  colourInput("line1", "Line color first file", "black",
+                              palette = "limited"),
+                  colourInput("line2", "Line color second file", "black",
+                              palette = "limited"),
+                  colourInput("line3", "Line color third file", "black",
+                              palette = "limited")
+                ),
+                column(
+                  9,
+                  plotlyOutput("graph"),
+                  div(style = "height:10px;background-color: transparent;"),
+                  plotlyOutput("graph_bigotes"),
+                  div(style = "height:10px;background-color: transparent;"),
+                  textAreaInput(
+                    "comment_plot1",
+                    "Comments to include in report",
+                    "Comments",
+                    width = "1000px",
+                    height = "100px"
+                  )
+                )
+              ))),
+      tabItem(tabName = "plot_all",
+              fluidPage(
+                fluidRow(
+                  column(
+                    width = 3,
+                    selectInput(
+                      "type_file",
+                      label = "Select the biomarker to plot",
+                      selected = NULL,
+                      choices = c(
+                        " " = "NULL",
+                        "KREC" = "KREC",
+                        "TREC" = "TREC",
+                        "ACTB" = "ACTB"
+                      )
+                    )
+                  ),
+                  column(
+                    width = 3,
+                    shinyDirButton(
+                      "dir2",
+                      "Input directory",
+                      "Upload",
+                      icon = icon("folder"),
+                      viewtype = "detail"
+                    ),
+                    div(style = "height:10px;background-color: transparent;"),
+                    actionButtonStyled("display",
+                                       "Display",
+                                       type = "warning",
+                                       width = "100%")
+                  ),
+                  column(
+                    width = 3,
+                    actionButtonStyled(
+                      "reset11",
+                      "Reset input",
+                      icon = icon("house"),
+                      width = "110px",
+                      type = "info"
+                    )
+                  )
+                ),
+                fluidRow(
+                  column(
+                    width = 8,
+                    style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                    DTOutput('plot_big', width = "98%", height = "98%"),
+                    div(style = "height:50px;background-color: transparent;")
+                  )
+                ),
+                fluidRow(
+                  column(4,
+                         div(style = "height:30px;background-color: transparent;"),
+                         tableOutput('summary'),
+                         colourInput("colSummary", "Color", "green",
+                                     palette = "limited")),
+                  column(
+                    width = 8,
+                    div(style = "height:30px;background-color: transparent;"),
+                    plotlyOutput("graph2")
+              )))),
+      tabItem(
+        "report",
+        fluidPage(
+          fluidRow(
+            column(
+              3,
+              radioButtons(
+                "file1_input",
+                label = "Do you want to include file 1:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "file2_input",
+                label = "Do you want to include file 2:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "file3_input",
+                label = "Do you want to include file 3:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
             )
           ),
-          width = 3,
-          solidHeader = TRUE,
-          status = "warning",
-          uiOutput("boxContentUI2")
-        ),
-        box(
-          status = "warning",
-          height = 600,
-          width = 12,
-          style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
-          DTOutput('contents', width = "98%", height = "98%")
-        )
-      ),
-      
-      fluidRow(
-        box(
-          title = "Title 1",
-          width = 4,
-          solidHeader = TRUE,
-          status = "primary",
-          "Box content"
-        ),
-        box(
-          title = "Title 2",
-          width = 4,
-          solidHeader = TRUE,
-          span(
-            `data-toggle` = "tooltip",
-            `data-placement` = "right",
-            title = "Please upload a file.  Supported file types are:  .txt, .csv and .xls",
-            icon("info-circle")
-          )
-        ),
-        box(
-          title = "Title 1",
-          width = 4,
-          solidHeader = TRUE,
-          status = "warning",
-          fileInputOnlyButton("file", buttonLabel = "Browse", width = 30)
-        )
-      ),
-      
-      fluidRow(
-        box(
-          width = 4,
-          background = "black",
-          "A box with a solid black background"
-        ),
-        box(
-          title = "Title 5",
-          width = 4,
-          background = "light-blue",
-          "A box with a solid light-blue background"
-        ),
-        box(
-          title = "Title 6",
-          width = 4,
-          background = "maroon",
-          "A box with a solid maroon background"
+          fluidRow(
+            column(
+              3,
+              radioButtons(
+                "plot1_input",
+                label = "Do you want to include well-plot file 1:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "plot2_input",
+                label = "Do you want to include well-plot file 2:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "plot3_input",
+                label = "Do you want to include well-plot file 3:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            )
+          ),
+          fluidRow(column(
+            width = 8,
+            textAreaInput(
+              "comment",
+              "Comments to include in report",
+              "Comments",
+              width = "1000px",
+              height = "100px"
+            )
+          )),
+          fluidRow(column(
+            width = 6,
+            textAreaInput("autor", "Autor", width = "400px", height = "40px"),
+            textAreaInput("title_doc", "Título informe", width = "500px", height = "40px")
+          )),
+          fluidRow(column(
+            width = 3,
+            downloadButton(outputId = "report_gen",
+                           label = "Create my report")
+          ))
         )
       )
     )
-  ))
+  )
 )
