@@ -1120,6 +1120,8 @@ server <- function(input, output, session) {
       my_vals$comment_data1 <- input$comment_data1
       my_vals$comment_data2 <- input$comment_data2
       my_vals$comment_data3 <- input$comment_data3
+      
+      my_vals$comment_plot1 <- input$comment_plot1
       # copy markdown report file to a temporary directory before knitting it with the
       # selected dataset. This is useful if we don't have write permissions for the current
       # working directory

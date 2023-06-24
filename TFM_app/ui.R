@@ -398,7 +398,15 @@ ui <- dashboardPage(
                   9,
                   plotlyOutput("graph"),
                   div(style = "height:10px;background-color: transparent;"),
-                  plotlyOutput("graph_bigotes")
+                  plotlyOutput("graph_bigotes"),
+                  div(style = "height:10px;background-color: transparent;"),
+                  textAreaInput(
+                    "comment_plot1",
+                    "Comments to include in report",
+                    "Comments",
+                    width = "1000px",
+                    height = "100px"
+                  )
                 )
               ))),
       tabItem(tabName = "plot_all",
@@ -525,7 +533,7 @@ ui <- dashboardPage(
               "Comments to include in report",
               "Comments",
               width = "1000px",
-              height = "200px"
+              height = "100px"
             )
           )),
           fluidRow(column(

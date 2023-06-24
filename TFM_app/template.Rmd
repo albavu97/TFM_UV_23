@@ -96,6 +96,12 @@ if(params$imported$comment_data3 == "Comments"){
 }else{
   comment_data3 <- TRUE
 }
+
+if(params$imported$comment_plot1 == "Comments"){
+  comment_plot1 <- FALSE
+}else{
+  comment_plot1 <- TRUE
+}
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -316,8 +322,15 @@ p + geom_violin()
 
 ```
 
+```{r comment_plot1, echo=FALSE, eval=comment_plot1,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Comentarios introducidos en los gráficos:")
+cat("\n")
+
+cat(params$imported$comment_plot1)
+```
+
 ``` {r comment1, echo=FALSE,eval=show_comment, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}  
-cat("## Comentarios introducidos:")
+cat("## Comentarios finales:")
 cat("\n")
 
 cat(params$imported$comment)
