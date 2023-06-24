@@ -131,6 +131,7 @@ server <- function(input, output, session) {
                    my_vals$dat_table <- csvs(1)
                    my_vals$boxplot <- ldf1(1)
                    my_vals$cp1 <- csvs(1)$Cp
+                  
                  } else if (length(global$lista) == 2) {
                    shinyalert("All files upload!", global$lista, type = "info")
                    titleUpdate2()
@@ -145,6 +146,7 @@ server <- function(input, output, session) {
                    my_vals$boxplot2 <- ldf1(2)
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
+                
                    # to pass to markdown incase we need the full dataset
                  } else if (length(global$lista) == 3) {
                    shinyalert("All files upload!", global$lista, type = "info")
@@ -167,6 +169,7 @@ server <- function(input, output, session) {
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
                    my_vals$cp3 <- csvs(3)$Cp
+                  
                  }
                  else if (length(global$lista) == 0) {
                    shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
@@ -798,33 +801,36 @@ server <- function(input, output, session) {
         fig <- fig %>%
           add_trace(
             y = ~ csvs(1)$Cp,
+            
             legendgroup = 'M',
             scalegroup = 'M',
             name = global$lista[1],
             box = list(visible = T),
             meanline = list(visible = T),
-            color = I("blue")
+            color = I(input$col1)
           )
         fig <- fig %>%
           add_trace(
             y = ~ csvs(2)$Cp,
+            
             legendgroup = 'F',
             scalegroup = 'F',
             name = global$lista[2],
             box = list(visible = T),
             meanline = list(visible = T),
-            color = I("pink")
+            color = I(input$col2)
           )
         
         fig <- fig %>%
           add_trace(
             y = ~ csvs(3)$Cp,
+            
             legendgroup = 'G',
             scalegroup = 'G',
             name = global$lista[3],
             box = list(visible = T),
             meanline = list(visible = T),
-            color = I("green")
+            color = I(input$col3)
           )
         
         fig <- fig %>%
@@ -838,22 +844,24 @@ server <- function(input, output, session) {
         fig <- fig %>%
           add_trace(
             y = ~ csvs(1)$Cp,
+            
             legendgroup = 'M',
             scalegroup = 'M',
             name = global$lista[1],
             box = list(visible = T),
             meanline = list(visible = T),
-            color = I("blue")
+            color = I(input$col1)
           )
         fig <- fig %>%
           add_trace(
             y = ~ csvs(2)$Cp,
+            
             legendgroup = 'F',
             scalegroup = 'F',
             name = global$lista[2],
             box = list(visible = T),
             meanline = list(visible = T),
-            color = I("pink")
+            color = I(input$col2)
           )
         fig <- fig %>%
           layout(yaxis = list(zeroline = F),
@@ -866,12 +874,13 @@ server <- function(input, output, session) {
         fig <- fig %>%
           add_trace(
             y = ~ csvs(1)$Cp,
+            
             legendgroup = 'M',
             scalegroup = 'M',
             name = global$lista[1],
             box = list(visible = T),
             meanline = list(visible = T),
-            color = I("blue")
+            color = I(input$col1)
           )
         
         fig <- fig %>%
@@ -879,7 +888,8 @@ server <- function(input, output, session) {
                  violinmode = 'group')
         
       })
-    }})
+    }
+  })
   
   plot_big <- reactive({
     if (length(global$lista) == 3) {
@@ -891,8 +901,9 @@ server <- function(input, output, session) {
             jitter = 0.3,
             pointpos = -1.8,
             boxpoints = 'all',
-            marker = list(color = 'rgb(7,40,89)'),
-            line = list(color = 'rgb(7,40,89)'),
+            marker = list(color = input$line1),
+            line = list(color = input$line1),
+            fillcolor = input$col1,
             name = global$lista[1]
           )
         fig <-
@@ -900,8 +911,9 @@ server <- function(input, output, session) {
             y = csvs(2)$Cp,
             name = global$lista[2],
             boxpoints = FALSE,
-            marker = list(color = 'rgb(9,56,125)'),
-            line = list(color = 'rgb(9,56,125)')
+            marker = list(color = input$line2),
+            line = list(color = input$line2),
+            fillcolor = input$col2,
           )
         fig <-
           fig %>% add_boxplot(
@@ -914,7 +926,8 @@ server <- function(input, output, session) {
               line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
                           outlierwidth = 2)
             ),
-            line = list(color = 'rgb(8,81,156)')
+            line = list(color = input$line3),
+            fillcolor = input$col3,
           )
         fig <- fig %>% layout(title = "Box Plot Styling Outliers")
         
@@ -928,8 +941,9 @@ server <- function(input, output, session) {
             jitter = 0.3,
             pointpos = -1.8,
             boxpoints = 'all',
-            marker = list(color = 'rgb(7,40,89)'),
-            line = list(color = 'rgb(7,40,89)'),
+            marker = list(color = input$line1),
+            line = list(color = input$line1),
+            fillcolor = input$col1,
             name = global$lista[1]
           )
         fig <-
@@ -937,8 +951,9 @@ server <- function(input, output, session) {
             y = csvs(2)$Cp,
             name = global$lista[2],
             boxpoints = FALSE,
-            marker = list(color = 'rgb(9,56,125)'),
-            line = list(color = 'rgb(9,56,125)')
+            marker = list(color = input$line2),
+            line = list(color = input$line2),
+            fillcolor = input$col2,
           )
         fig <- fig %>% layout(title = "Box Plot Styling Outliers")
         
@@ -952,8 +967,9 @@ server <- function(input, output, session) {
             jitter = 0.3,
             pointpos = -1.8,
             boxpoints = 'all',
-            marker = list(color = 'rgb(7,40,89)'),
-            line = list(color = 'rgb(7,40,89)'),
+            marker = list(color = input$line1),
+            line = list(color = input$line1),
+            fillcolor = input$col1,
             name = global$lista[1]
           )
         fig <- fig %>% layout(title = "Box Plot Styling Outliers")
@@ -996,7 +1012,7 @@ server <- function(input, output, session) {
     setwd(mypath)
     global2$lista <- list.files(
       global2$datapath,
-      pattern = paste0("*", type_file(), ".txt"),
+      pattern = paste0("*", type_file(), "*"),
       recursive = TRUE
     )
     files = read.csv2(
@@ -1006,6 +1022,8 @@ server <- function(input, output, session) {
       header = TRUE,
       skip = 1
     )
+    files <- cbind(files, file = rep(global2$lista[1]), nrow(files))
+    contador <- 2
     for (txt_file in global2$lista[2:length(global2$lista)]) {
       tmp <-
         read.csv2(
@@ -1015,11 +1033,24 @@ server <- function(input, output, session) {
           header = TRUE,
           skip = 1
         )
+      tmp <-
+        cbind(tmp, file = rep(global2$lista[contador]), nrow(tmp))
       common <- intersect(colnames(files), colnames(tmp))
       files <- rbind(files[common], tmp[common])
       files["Name"] <- NULL
+      contador <- contador + 1
     }
     files
+  })
+  
+  table_summary <- reactive({
+    data <- render_big_plot()
+    data$Cp <- as.numeric(as.character(data$Cp))
+    data_summary <- data.frame(unclass(summary(data$Cp)))
+    data_summary$names <- c("Min","1st Qu","Median","Mean","3rd Qu","Max","NA's")
+    colnames(data_summary) <- c("value","statistic")
+    my_data2 <- data_summary[, c(2, 1)]
+    my_data2
   })
   
   observeEvent(ignoreNULL = TRUE,
@@ -1057,14 +1088,19 @@ server <- function(input, output, session) {
                          line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
                                      outlierwidth = 2)
                        ),
-                       line = list(color = 'rgb(8,81,156)')
+                       line = list(color = 'rgb(8,81,156)'),
+                       fillcolor = input$colSummary
                      )
                    fig <- fig %>% layout(title = type_file())
                  })
                  output$number_txt <- renderText({
                    global2$lista
                  })
+                 output$summary <- renderTable({
+                   table_summary()
+                 })
                })
+  
   
   output$report_gen <- downloadHandler(
     filename = "sample_report.pdf",
@@ -1079,6 +1115,11 @@ server <- function(input, output, session) {
       #Get comments
       my_vals$comment <- input$comment
       my_vals$autor <- input$autor
+      my_vals$title <- input$title_doc
+      
+      my_vals$comment_data1 <- input$comment_data1
+      my_vals$comment_data2 <- input$comment_data2
+      my_vals$comment_data3 <- input$comment_data3
       # copy markdown report file to a temporary directory before knitting it with the
       # selected dataset. This is useful if we don't have write permissions for the current
       # working directory
@@ -1107,14 +1148,13 @@ server <- function(input, output, session) {
         envir = new.env(parent = globalenv())
       )
       
-    }
-    
-  )
+    })
   
   observeEvent(input$reset11, {
     output$number_txt <- NULL
     output$plot_big <- NULL
     output$graph2 <- NULL
+    output$summary <- NULL
   })
   
   observeEvent(input$reset, {
@@ -1135,4 +1175,4 @@ server <- function(input, output, session) {
   
   
   
-  }
+}

@@ -49,17 +49,19 @@ ui <- dashboardPage(
       menuItem("Dashboard",
                tabName = "dashboard",
                icon = icon("table")),
-      menuItem("Cell",
+      menuItem("Well plate",
                tabName = "cell",
                icon = icon("flask")),
       menuItem(
-        "Box Plot",
+        "Distribution plots",
         tabName = "plot",
         icon = icon("chart-simple")
       ),
-      menuItem("Plot",
-               tabName = "plot_all",
-               icon = icon("hand")),
+      menuItem(
+        "Biomarker summary",
+        tabName = "plot_all",
+        icon = icon("hand")
+      ),
       menuItem("Report",
                tabName = "report",
                icon = icon("download"))
@@ -95,24 +97,24 @@ ui <- dashboardPage(
                 
                 textInput("fileId", "Input File ID", width = "100%")),
             div(style = "height:40px;background-color: transparent;"),
-              div(
-                style = "height:40px;background-color: transparent;text-align:center",
-                tags$style(
-                  ".btn-default{
+            div(
+              style = "height:40px;background-color: transparent;text-align:center",
+              tags$style(
+                ".btn-default{
   background-color: #2CA666;
     color: white;
     border-color: black;
     font-weight: bold;
 }"
-                ),
-                shinyDirButton(
-                  "dir",
-                  "Input directory",
-                  "Upload",
-                  icon = icon("folder"),
-                  viewtype = "detail"
-                )
               ),
+              shinyDirButton(
+                "dir",
+                "Input directory",
+                "Upload",
+                icon = icon("folder"),
+                viewtype = "detail"
+              )
+            ),
             div(style = "height:20px;background-color: transparent;"),
             div(
               style = "height:40px;background-color: transparent;text-align:center",
@@ -200,7 +202,15 @@ ui <- dashboardPage(
                       ),
                     ),
                     style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
-                    DTOutput('contents', width = "98%", height = "98%")
+                    DTOutput('contents', width = "98%", height = "98%"),
+                    div(style = "height:20px;background-color: transparent;"),
+                    textAreaInput(
+                      "comment_data1",
+                      "Comments to include in report",
+                      "Comments",
+                      width = "1000px",
+                      height = "100px"
+                    )
                   ),
                   tabPanel(
                     title = textOutput("title2"),
@@ -244,7 +254,15 @@ ui <- dashboardPage(
                         )
                       ),
                     ),
-                    DTOutput('contents2', width = "98%", height = "98%")
+                    DTOutput('contents2', width = "98%", height = "98%"),
+                    div(style = "height:20px;background-color: transparent;"),
+                    textAreaInput(
+                      "comment_data2",
+                      "Comments to include in report",
+                      "Comments",
+                      width = "1000px",
+                      height = "100px"
+                    )
                   ),
                   tabPanel(
                     title = textOutput("title3"),
@@ -288,7 +306,15 @@ ui <- dashboardPage(
                       ),
                     ),
                     style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
-                    DTOutput('contents3', width = "98%", height = "98%")
+                    DTOutput('contents3', width = "98%", height = "98%"),
+                    div(style = "height:20px;background-color: transparent;"),
+                    textAreaInput(
+                      "comment_data3",
+                      "Comments to include in report",
+                      "Comments",
+                      width = "1000px",
+                      height = "100px"
+                    )
                   )
                 )
               )),
@@ -345,25 +371,36 @@ ui <- dashboardPage(
                          )))
               )),
       tabItem(tabName = "plot",
-              fluidPage(
-                fluidRow(
-                  column(3,
-                         selectInput(
-                           "type_plot",
-                           label = "Select type of plot",
-                           selected = NULL,
-                           choices = c(
-                             " " = "NULL",
-                             "Box Plot" = "boxplot",
-                             "Violin" = "violin"
-                           )
-                         )),
-                  column(9,
-                         plotlyOutput("graph"),
-                         div(style = "height:10px;background-color: transparent;"),
-                plotlyOutput("graph_bigotes"))
-              ))
-              ),
+              fluidPage(fluidRow(
+                column(
+                  3,
+                  selectInput(
+                    "type_plot",
+                    label = "Select type of plot",
+                    selected = NULL,
+                    choices = c(
+                      " " = "NULL",
+                      "Box Plot" = "boxplot",
+                      "Violin" = "violin"
+                    )
+                  ),
+                  colourInput("col1", "Fill color first file:", "yellow"),
+                  colourInput("col2", "Fill color second file:", "green"),
+                  colourInput("col3", "Fill color third file:", "orange"),
+                  colourInput("line1", "Line color first file", "black",
+                              palette = "limited"),
+                  colourInput("line2", "Line color second file", "black",
+                              palette = "limited"),
+                  colourInput("line3", "Line color third file", "black",
+                              palette = "limited")
+                ),
+                column(
+                  9,
+                  plotlyOutput("graph"),
+                  div(style = "height:10px;background-color: transparent;"),
+                  plotlyOutput("graph_bigotes")
+                )
+              ))),
       tabItem(tabName = "plot_all",
               fluidPage(
                 fluidRow(
@@ -377,7 +414,7 @@ ui <- dashboardPage(
                         " " = "NULL",
                         "KREC" = "KREC",
                         "TREC" = "TREC",
-                        "Other" = "Other"
+                        "ACTB" = "ACTB"
                       )
                     )
                   ),
@@ -405,83 +442,104 @@ ui <- dashboardPage(
                       width = "110px",
                       type = "info"
                     )
-                  ),
+                  )
+                ),
+                fluidRow(
                   column(
                     width = 8,
                     style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
                     DTOutput('plot_big', width = "98%", height = "98%"),
-                    div(style = "height:50px;background-color: transparent;"),
+                    div(style = "height:50px;background-color: transparent;")
+                  )
+                ),
+                fluidRow(
+                  column(4,
+                         div(style = "height:30px;background-color: transparent;"),
+                         tableOutput('summary'),
+                         colourInput("colSummary", "Color", "green",
+                                     palette = "limited")),
+                  column(
+                    width = 8,
+                    div(style = "height:30px;background-color: transparent;"),
                     plotlyOutput("graph2")
-                  )
-                  
-                )
-              )),
-      tabItem("report",
-              fluidPage(
-                fluidRow(
-                  column(
-                    3,
-                    radioButtons(
-                      "file1_input",
-                      label = "Do you want to include file 1:",
-                      choices = c("SI" = TRUE, "NO" = FALSE)
-                    )
-                  ),
-                  column(
-                    3,
-                    radioButtons(
-                      "file2_input",
-                      label = "Do you want to include file 2:",
-                      choices = c("SI" = TRUE, "NO" = FALSE)
-                    )
-                  ),
-                  column(
-                    3,
-                    radioButtons(
-                      "file3_input",
-                      label = "Do you want to include file 3:",
-                      choices = c("SI" = TRUE, "NO" = FALSE)
-                    )
-                  )
-                ),
-                fluidRow(
-                  column(
-                    3,
-                    radioButtons(
-                      "plot1_input",
-                      label = "Do you want to include well-plot file 1:",
-                      choices = c("SI" = TRUE, "NO" = FALSE)
-                    )
-                  ),
-                  column(
-                    3,
-                    radioButtons(
-                      "plot2_input",
-                      label = "Do you want to include well-plot file 2:",
-                      choices = c("SI" = TRUE, "NO" = FALSE)
-                    )
-                  ),
-                  column(
-                    3,
-                    radioButtons(
-                      "plot3_input",
-                      label = "Do you want to include well-plot file 3:",
-                      choices = c("SI" = TRUE, "NO" = FALSE)
-                    )
-                  )
-                ),
-                fluidRow(column(
-                  width = 8,
-                  textAreaInput("comment", "Comments to include in report", "Comments", width = "1000px",height = "200px"))),
-                fluidRow(column(
-                  width = 6,
-                  textAreaInput("autor", "Autor", width = "400px",height = "40px"))),
-                fluidRow(column(
-                  width = 3,
-                  downloadButton(outputId = "report_gen",
-                                 label = "Create my report")
-                ))
-              ))
+              )))),
+      tabItem(
+        "report",
+        fluidPage(
+          fluidRow(
+            column(
+              3,
+              radioButtons(
+                "file1_input",
+                label = "Do you want to include file 1:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "file2_input",
+                label = "Do you want to include file 2:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "file3_input",
+                label = "Do you want to include file 3:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            )
+          ),
+          fluidRow(
+            column(
+              3,
+              radioButtons(
+                "plot1_input",
+                label = "Do you want to include well-plot file 1:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "plot2_input",
+                label = "Do you want to include well-plot file 2:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "plot3_input",
+                label = "Do you want to include well-plot file 3:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            )
+          ),
+          fluidRow(column(
+            width = 8,
+            textAreaInput(
+              "comment",
+              "Comments to include in report",
+              "Comments",
+              width = "1000px",
+              height = "200px"
+            )
+          )),
+          fluidRow(column(
+            width = 6,
+            textAreaInput("autor", "Autor", width = "400px", height = "40px"),
+            textAreaInput("title_doc", "Título informe", width = "500px", height = "40px")
+          )),
+          fluidRow(column(
+            width = 3,
+            downloadButton(outputId = "report_gen",
+                           label = "Create my report")
+          ))
+        )
+      )
     )
   )
 )

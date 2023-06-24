@@ -1,5 +1,4 @@
 ---
-title: "Informe datos qPCR neonatos"
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 output: pdf_document
 header-includes:
@@ -14,6 +13,14 @@ params:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+```{r title, echo=FALSE,include=FALSE}
+title_var <- params$imported$title
+```
+
+---
+title: `r title_var`
+---
 
 \addtolength{\headheight}{1.0cm} 
 \fancypagestyle{plain}{} 
@@ -51,7 +58,7 @@ if(plot1 == "FALSE"){
 }else{
   show_plot <- TRUE
 }
-if(plot2 == "FALSE" | length(params$imported$lista)<2){
+if(plot2 == "FALSE" | length(params$imported$lista)<2 | length(params$imported$lista)==3){
   show_plot2 <- FALSE
 }else{
   show_plot2 <- TRUE
@@ -71,6 +78,23 @@ if(params$imported$comment == "Comments"){
   show_comment <- FALSE
 }else{
   show_comment <- TRUE
+}
+
+if(params$imported$comment_data1 == "Comments"){
+  comment_data1 <- FALSE
+}else{
+  comment_data1 <- TRUE
+}
+
+if(params$imported$comment_data2 == "Comments"){
+  comment_data2 <- FALSE
+}else{
+  comment_data2 <- TRUE
+}
+if(params$imported$comment_data3 == "Comments"){
+  comment_data3 <- FALSE
+}else{
+  comment_data3 <- TRUE
 }
 ```
 
@@ -92,6 +116,13 @@ params$imported$dat_table %>%
   
 ```
 
+```{r comment_data1, echo=FALSE, eval=comment_data1,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Comentarios introducidos primera tabla:")
+cat("\n")
+
+cat(params$imported$comment_data1)
+```
+
 
 ```{r table2, echo=FALSE,eval=show_text2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
 cat("## Tabla segundo archivo")
@@ -102,6 +133,13 @@ params$imported$dat_table2 %>%
   
 ```
 
+```{r comment_data2, echo=FALSE, eval=comment_data2,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Comentarios introducidos segunda tabla:")
+cat("\n")
+
+cat(params$imported$comment_data2)
+```
+
 ```{r table3, echo=FALSE,eval=show_text3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
 cat("## Tabla tercer archivo")
 
@@ -109,6 +147,13 @@ cat("## Tabla tercer archivo")
 params$imported$dat_table3 %>% 
   kable(format = "markdown")
   
+```
+
+```{r comment_data3, echo=FALSE, eval=comment_data3,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Comentarios introducidos tercera tabla:")
+cat("\n")
+
+cat(params$imported$comment_data3)
 ```
 
 ``` {r boxplot, echo=FALSE, eval= show_plot, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
@@ -214,6 +259,11 @@ boxplot(data3,
         ylab="Cp",
         col=c("blue","orange","green"))
 
+df.m <- reshape2::melt(data3, id.vars = NULL)
+
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p + geom_violin()
+
 ```
 
 ``` {r boxplot_long2, echo=FALSE,eval=show_plot2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
@@ -232,6 +282,11 @@ boxplot(data3,
         xlab="files",
         ylab="Cp",
         col=c("blue","orange","green"))
+
+df.m <- reshape2::melt(data3, id.vars = NULL)
+
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p + geom_violin()
 ```
 
 ``` {r boxplot_long3, echo=FALSE,eval=show_plot3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
@@ -253,6 +308,11 @@ boxplot(data3,
         xlab="files",
         ylab="Cp",
         col=c("blue","orange","green"))
+
+df.m <- reshape2::melt(data3, id.vars = NULL)
+
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p + geom_violin()
 
 ```
 
