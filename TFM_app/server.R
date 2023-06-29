@@ -93,6 +93,26 @@ server <- function(input, output, session) {
     })
   })
   
+  render4 <- reactive({
+    output$contents3_bis <- renderDT({
+      datatable(
+        datafile4(),
+        options = list(
+          pageLength = 10,
+          columnDefs = list(list(
+            className = 'dt-center', targets = 5
+          )),
+          lengthMenu = c(5, 10, 15, 20),
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"
+          )
+        )
+      )
+    })
+  })
+  
   observeEvent(ignoreNULL = TRUE,
                eventExpr = {
                  input$type_plot
@@ -131,7 +151,7 @@ server <- function(input, output, session) {
                    my_vals$dat_table <- csvs(1)
                    my_vals$boxplot <- ldf1(1)
                    my_vals$cp1 <- csvs(1)$Cp
-                  
+                   
                  } else if (length(global$lista) == 2) {
                    shinyalert("All files upload!", global$lista, type = "info")
                    titleUpdate2()
@@ -146,7 +166,7 @@ server <- function(input, output, session) {
                    my_vals$boxplot2 <- ldf1(2)
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
-                
+                   
                    # to pass to markdown incase we need the full dataset
                  } else if (length(global$lista) == 3) {
                    shinyalert("All files upload!", global$lista, type = "info")
@@ -169,7 +189,33 @@ server <- function(input, output, session) {
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
                    my_vals$cp3 <- csvs(3)$Cp
-                  
+                   
+                 } else if (length(global$lista) == 4) {
+                   shinyalert("All files upload!", global$lista, type = "info")
+                   titleUpdate4()
+                   render1()
+                   render2()
+                   render3()
+                   render4()
+                   update_function1(1)
+                   update_function1(2)
+                   update_function1(3)
+                   update_function1(4)
+                   # to pass to markdown incase we need the full dataset
+                   # Values for markdown template
+                   my_vals$dat_table <- csvs(1)
+                   my_vals$boxplot <- ldf1(1)
+                   my_vals$dat_table2 <- csvs(2)
+                   my_vals$boxplot2 <- ldf1(2)
+                   my_vals$dat_table3 <- csvs(3)
+                   my_vals$boxplot3 <- ldf1(3)
+                   my_vals$dat_table4 <- csvs(4)
+                   my_vals$boxplot4 <- ldf1(4)
+                   #Boxplot de los 3 archivos
+                   my_vals$cp1 <- csvs(1)$Cp
+                   my_vals$cp2 <- csvs(2)$Cp
+                   my_vals$cp3 <- csvs(3)$Cp
+                   my_vals$cp4 <- csvs(4)$Cp
                  }
                  else if (length(global$lista) == 0) {
                    shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
@@ -192,12 +238,23 @@ server <- function(input, output, session) {
     #   data.table = FALSE
     # )
     #Quitamos la columna Name para que no haya problemas
-    tmp2 <- tmp[,!(names(tmp) %in% "Name")]
+    tmp2 <- tmp[, !(names(tmp) %in% "Name")]
     tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
       gsub(",", ".", x)
     })
     tmp2
   }
+  
+  titleUpdate4 <- reactive({
+    output$title1 <- renderText(global$lista[1])
+    output$title2 <- renderText(global$lista[2])
+    output$title3 <- renderText(global$lista[3])
+    output$title3_bis <- renderText(global$lista[4])
+    output$title4 <- renderText(global$lista[1])
+    output$title5 <- renderText(global$lista[2])
+    output$title6 <- renderText(global$lista[3])
+    output$title6_bis <- renderText(global$lista[3])
+  })
   
   titleUpdate3 <- reactive({
     output$title1 <- renderText(global$lista[1])
@@ -294,6 +351,20 @@ server <- function(input, output, session) {
     filtered
   })
   
+  datafile4 <- reactive({
+    filtered <- csvs(4)
+    if (input$colorInput4 != "") {
+      filtered <- subset(csvs(4), Color %in% input$colorInput4)
+    }
+    if (input$cpSelect4 != "") {
+      filtered <- subset(csvs(4), Cp > input$cpSelect4)
+    }
+    if (!is.null(input$PosSelect4)) {
+      filtered <- subset(csvs(4), Pos %in% input$PosSelect4)
+    }
+    filtered
+  })
+  
   observeEvent(input$reset2, {
     update_function1(1)
     datafile1()
@@ -307,6 +378,11 @@ server <- function(input, output, session) {
   observeEvent(input$reset4, {
     update_function1(3)
     datafile3()
+  })
+  
+  observeEvent(input$reset4_bis, {
+    update_function1(4)
+    datafile4()
   })
   
   
@@ -535,7 +611,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
     #merged_df$Cp = as.numeric(levels(merged_df$Cp))[merged_df$Cp]
     merged_df
   }
@@ -654,7 +730,7 @@ server <- function(input, output, session) {
     )
     
     merged_df <-
-      merged_df[order(factor(merged_df$col1, levels = specific_order)),]
+      merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
     options(scipen = 999)
     merged_df$Concentration <- as.numeric(merged_df$Concentration)
     merged_df
@@ -670,6 +746,9 @@ server <- function(input, output, session) {
   v4plot <- reactive({
     input$var4plot
   })
+  v4plot_bis <- reactive({
+    input$var4plot_bis
+  })
   
   
   df1 <-  function(number) {
@@ -679,6 +758,8 @@ server <- function(input, output, session) {
       variable = v3plot()
     } else if (number == 3) {
       variable = v4plot()
+    } else if (number == 4) {
+      variable = v4plot_bis()
     }
     
     if (variable == "Cp") {
@@ -794,7 +875,92 @@ server <- function(input, output, session) {
       theme_bw()
   })
   
+  output$plot4 <- renderPlot({
+    # check input data and rise an error message if none
+    validate(need(csvs(4), "Please, upload a data set with data 1"))
+    ggplot(data = ldf1(4)) +
+      geom_circle(aes(
+        x0 = col,
+        y0 = row,
+        r = 0.5,
+        fill = as.numeric(value)
+      )) +
+      coord_equal() +
+      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+      scale_y_continuous(
+        breaks = 1:8,
+        labels = LETTERS[1:8],
+        expand = expansion(mult = c(0.01, 0.01)),
+        trans = reverse_trans()
+      ) +
+      scale_fill_gradientn(colours = topo.colors(40)) +
+      labs(
+        title = "96 Well plate of TRECs",
+        subtitle = "Cp or log10(Conc) values",
+        x = "Col",
+        y = "Row"
+      ) +
+      theme_bw()
+  })
+  
+  #Gráfico bigotes
+  
   plot_bigotes <- reactive({
+    if (length(global$lista) == 4) {
+      output$graph_bigotes <- renderPlotly({
+        fig <- plot_ly(type = 'violin')
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(1)$Cp,
+            
+            legendgroup = 'M',
+            scalegroup = 'M',
+            name = global$lista[1],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I(input$col1)
+          )
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(2)$Cp,
+            
+            legendgroup = 'F',
+            scalegroup = 'F',
+            name = global$lista[2],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I(input$col2)
+          )
+        
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(3)$Cp,
+            
+            legendgroup = 'G',
+            scalegroup = 'G',
+            name = global$lista[3],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I(input$col3)
+          )
+        fig <- fig %>%
+          add_trace(
+            y = ~ csvs(4)$Cp,
+            
+            legendgroup = 'A',
+            scalegroup = 'A',
+            name = global$lista[4],
+            box = list(visible = T),
+            meanline = list(visible = T),
+            color = I(input$col4)
+          )
+        
+        fig <- fig %>%
+          layout(yaxis = list(zeroline = F),
+                 violinmode = 'group')
+        
+      })
+    }
     if (length(global$lista) == 3) {
       output$graph_bigotes <- renderPlotly({
         fig <- plot_ly(type = 'violin')
@@ -891,7 +1057,59 @@ server <- function(input, output, session) {
     }
   })
   
+  #Gráfica boxplot
+  
   plot_big <- reactive({
+    if (length(global$lista) == 4) {
+      output$graph <- renderPlotly({
+        fig <- plot_ly(type = "box")
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(1)$Cp,
+            jitter = 0.3,
+            pointpos = -1.8,
+            boxpoints = 'all',
+            marker = list(color = input$line1),
+            line = list(color = input$line1),
+            fillcolor = input$col1,
+            name = global$lista[1]
+          )
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(2)$Cp,
+            name = global$lista[2],
+            boxpoints = FALSE,
+            marker = list(color = input$line2),
+            line = list(color = input$line2),
+            fillcolor = input$col2,
+          )
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(3)$Cp,
+            name = global$lista[3],
+            boxpoints = 'suspectedoutliers',
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
+            line = list(color = input$line3),
+            fillcolor = input$col3,
+          )
+        fig <-
+          fig %>% add_boxplot(
+            y = csvs(4)$Cp,
+            name = global$lista[4],
+            boxpoints = FALSE,
+            marker = list(color = input$line4),
+            line = list(color = input$line4),
+            fillcolor = input$col4,
+          )
+        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+        
+      })
+    }
     if (length(global$lista) == 3) {
       output$graph <- renderPlotly({
         fig <- plot_ly(type = "box")
@@ -1047,8 +1265,9 @@ server <- function(input, output, session) {
     data <- render_big_plot()
     data$Cp <- as.numeric(as.character(data$Cp))
     data_summary <- data.frame(unclass(summary(data$Cp)))
-    data_summary$names <- c("Min","1st Qu","Median","Mean","3rd Qu","Max","NA's")
-    colnames(data_summary) <- c("value","statistic")
+    data_summary$names <-
+      c("Min", "1st Qu", "Median", "Mean", "3rd Qu", "Max", "NA's")
+    colnames(data_summary) <- c("value", "statistic")
     my_data2 <- data_summary[, c(2, 1)]
     my_data2
   })
@@ -1108,10 +1327,12 @@ server <- function(input, output, session) {
       my_vals$file1 <- input$file1_input
       my_vals$file2 <- input$file2_input
       my_vals$file3 <- input$file3_input
+      my_vals$file4 <- input$file4_input
       #Values to plot 96-well
       my_vals$plot1 <- input$plot1_input
       my_vals$plot2 <- input$plot2_input
       my_vals$plot3 <- input$plot3_input
+      my_vals$plot4 <- input$plot4_input
       #Get comments
       my_vals$comment <- input$comment
       my_vals$autor <- input$autor
@@ -1120,6 +1341,7 @@ server <- function(input, output, session) {
       my_vals$comment_data1 <- input$comment_data1
       my_vals$comment_data2 <- input$comment_data2
       my_vals$comment_data3 <- input$comment_data3
+      my_vals$comment_data4 <- input$comment_data4
       
       my_vals$comment_plot1 <- input$comment_plot1
       # copy markdown report file to a temporary directory before knitting it with the
@@ -1150,7 +1372,8 @@ server <- function(input, output, session) {
         envir = new.env(parent = globalenv())
       )
       
-    })
+    }
+  )
   
   observeEvent(input$reset11, {
     output$number_txt <- NULL
@@ -1173,6 +1396,7 @@ server <- function(input, output, session) {
     output$plot2 <- NULL
     output$plot3 <- NULL
     output$graph <- NULL
+    output$graph2 <- NULL
   })
   
   
