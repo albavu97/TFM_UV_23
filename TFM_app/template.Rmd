@@ -49,24 +49,36 @@ if(var3 == "FALSE"){
 }else{
   show_text3 <- TRUE
 }
+if(params$imported$file4 == "FALSE"){
+  show_text4 <- FALSE
+}else{
+  show_text4 <- TRUE
+}
 
 plot1 <- params$imported$plot1
 plot2 <- params$imported$plot2
 plot3 <- params$imported$plot3
+plot4 <- params$imported$plot4
 if(plot1 == "FALSE"){
   show_plot <- FALSE
 }else{
   show_plot <- TRUE
 }
-if(plot2 == "FALSE" | length(params$imported$lista)<2 | length(params$imported$lista)==3){
+if(plot2 == "FALSE" | length(params$imported$lista)<2 | length(params$imported$lista)>3){
   show_plot2 <- FALSE
 }else{
   show_plot2 <- TRUE
 }
-if(plot3 == "FALSE"| length(params$imported$lista)<3){
+if(plot3 == "FALSE"| length(params$imported$lista)<3 | length(params$imported$lista)>3){
   show_plot3 <- FALSE
 }else{
   show_plot3 <- TRUE
+}
+
+if(plot4 == "FALSE"| length(params$imported$lista)<4){
+  show_plot4 <- FALSE
+}else{
+  show_plot4 <- TRUE
 }
 
 if(length(params$imported$lista)==1){
@@ -95,6 +107,11 @@ if(params$imported$comment_data3 == "Comments"){
   comment_data3 <- FALSE
 }else{
   comment_data3 <- TRUE
+}
+if(params$imported$comment_data4 == "Comments"){
+  comment_data4 <- FALSE
+}else{
+  comment_data4 <- TRUE
 }
 
 if(params$imported$comment_plot1 == "Comments"){
@@ -162,6 +179,22 @@ cat("\n")
 cat(params$imported$comment_data3)
 ```
 
+```{r table4, echo=FALSE,eval=show_text4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Tabla cuarto archivo")
+
+# objects passed as params are accessed from params$imported
+params$imported$dat_table4 %>% 
+  kable(format = "markdown")
+  
+```
+
+```{r comment_data4, echo=FALSE, eval=comment_data4,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
+cat("## Comentarios introducidos cuarta tabla:")
+cat("\n")
+
+cat(params$imported$comment_data4)
+```
+
 ``` {r boxplot, echo=FALSE, eval= show_plot, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
 cat("## 96-Well plot primer archivo")
 
@@ -223,6 +256,34 @@ ggplot(data = params$imported$boxplot2) +
 cat("## 96-Well plot tercer archivo")
 
 ggplot(data = params$imported$boxplot3) +
+      geom_circle(aes(
+        x0 = col,
+        y0 = row,
+        r = 0.5,
+        fill = as.numeric(value)
+      )) +
+      coord_equal() +
+      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+      scale_y_continuous(
+        breaks = 1:8,
+        labels = LETTERS[1:8],
+        expand = expansion(mult = c(0.01, 0.01)),
+        trans = reverse_trans()
+      ) +
+      scale_fill_gradientn(colours = terrain.colors(40)) +
+      labs(
+        title = "96 Well plate of TRECs",
+        subtitle = "Cp or log10(Conc) values",
+        x = "Col",
+        y = "Row"
+      ) +
+      theme_bw()
+```
+
+``` {r boxplot4, echo=FALSE, eval=show_plot4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+cat("## 96-Well plot cuarto archivo")
+
+ggplot(data = params$imported$boxplot4) +
       geom_circle(aes(
         x0 = col,
         y0 = row,
@@ -314,6 +375,36 @@ boxplot(data3,
         xlab="files",
         ylab="Cp",
         col=c("blue","orange","green"))
+
+df.m <- reshape2::melt(data3, id.vars = NULL)
+
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p + geom_violin()
+
+```
+
+``` {r boxplot_long4, echo=FALSE,eval=show_plot4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
+var1 <- params$imported$lista[1]
+var2 <- params$imported$lista[2]
+var3 <- params$imported$lista[3]
+var4 <- params$imported$lista[4]
+
+cp1 <- as.numeric(gsub(",", ".", params$imported$cp1))
+cp2 <- as.numeric(gsub(",", ".", params$imported$cp2))
+cp3 <- as.numeric(gsub(",", ".", params$imported$cp3))
+cp4 <- as.numeric(gsub(",", ".", params$imported$cp4))
+
+data3 <- data.frame(A=cp1,
+                    B=cp2,
+                    C=cp3,
+                    D=cp4)
+colnames(data3) <- c(var1,var2,var3,var4)
+
+boxplot(data3,
+        main="Box Plot of Cp of different files",
+        xlab="files",
+        ylab="Cp",
+        col=c("blue","orange","green","grey"))
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
