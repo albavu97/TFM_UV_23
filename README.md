@@ -6,7 +6,7 @@ Esta herramienta es el trabajo de fin de máster de bionformática de la Univers
 
 ## ⚙️ Instalación
 
-1. Clona este repositorio: `git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/albavu97/TFM_UV_23.git)`
+1. Clona este repositorio: `git clone https://github.com/albavu97/TFM_UV_23.git`
 2. Ve al directorio del proyecto: `cd TFM_UV_23`
 3. Comprobar tener instalado R. Sino visitar el sitio sitio web y descargar [Descargar R](https://cran.rstudio.com/)
 4. Ejecuta la aplicacion: `runApp('TFM_app')`
