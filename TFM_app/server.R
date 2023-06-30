@@ -4,6 +4,7 @@ library(data.table)
 require(ggforce)
 require(scales)
 
+
 server <- function(input, output, session) {
   # initialize reactiveValues object that will contain the plots/data that we will
   # pass to the R Markdown document
@@ -1348,7 +1349,7 @@ server <- function(input, output, session) {
       # selected dataset. This is useful if we don't have write permissions for the current
       # working directory
       temp_report <-
-        file.path("/Users/valleja3/Desktop/TFM_UV_23/TFM_app/template.Rmd")
+        file.path("template.Rmd")
       message("\n... temp_report path: ", temp_report, "\n")
       
       # copy the report template into the temp directory
