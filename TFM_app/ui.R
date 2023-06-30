@@ -15,25 +15,6 @@ library(plotly)
 
 my_height = "100px"
 
-fileInputOnlyButton <- function(..., label = "") {
-  temp <- fileInput(
-    inputId = "csvs",
-    label = "change",
-    multiple = T,
-    buttonLabel = "Upload files",
-    accept = c(
-      ".xls",
-      "text/csv",
-      "text/comma-separated-values, text/plain",
-      ".csv",
-      ".18"
-    )
-  )
-  temp$children[[1]] <- NULL
-  temp$children[[1]]$children[[2]] <- NULL
-  temp
-}
-
 ui <- dashboardPage(
   skin = "yellow",
   dashboardHeader(title = tags$img(
@@ -57,14 +38,14 @@ ui <- dashboardPage(
         tabName = "plot",
         icon = icon("chart-simple")
       ),
+      menuItem("Report",
+               tabName = "report",
+               icon = icon("download")),
       menuItem(
         "Biomarker summary",
         tabName = "plot_all",
         icon = icon("hand")
-      ),
-      menuItem("Report",
-               tabName = "report",
-               icon = icon("download"))
+      )
     )
   ),
   dashboardBody(
@@ -87,11 +68,6 @@ ui <- dashboardPage(
               style = paste0("max-width: 100%; height: ", my_height, ";")
             ),
             div(style = "height:10px;background-color: transparent;"),
-            div(
-              style = "height:40px;background-color: transparent;text-align:center",
-              fileInputOnlyButton("csvs", label = "Upload files"),
-              tags$style(".shiny-file-input-progress {display: none}")
-            ),
             div(style = "height:10px;background-color: transparent;"),
             div(style = "height:40px;background-color: transparent;text-align:center",
                 
@@ -315,61 +291,131 @@ ui <- dashboardPage(
                       width = "1000px",
                       height = "100px"
                     )
-                  )
+                  ),
+                  tabPanel(
+                    title = textOutput("title3_bis"),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "blue",
+                      status = "primary",
+                      selectInput('cpSelect4', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "orange",
+                      status = "warning",
+                      selectInput('colorInput4', '', "")
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      background = "green",
+                      status = "info",
+                      selectizeInput("PosSelect4",
+                                     "",
+                                     "",
+                                     selected = NULL,
+                                     multiple = TRUE)
+                    ),
+                    box(
+                      width = 3,
+                      solidHeader = TRUE,
+                      div(
+                        style = "height:40px;background-color: transparent;text-align:center",
+                        actionButtonStyled(
+                          "reset4_bis",
+                          "Reset input",
+                          icon = icon("house"),
+                          width = "110px",
+                          type = "info"
+                        )
+                      ),
+                    ),
+                    style = 'width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;',
+                    DTOutput('contents3_bis', width = "98%", height = "98%"),
+                    div(style = "height:20px;background-color: transparent;"),
+                    textAreaInput(
+                      "comment_data4",
+                      "Comments to include in report",
+                      "Comments",
+                      width = "1000px",
+                      height = "100px"
+                    )
+                  ),
                 )
               )),
-      tabItem(tabName = "cell",
-              tabBox(
-                width = 12,
-                tabPanel(title = textOutput("title4"),
-                         fluidPage(fluidRow(
-                           column(
-                             width = 3,
-                             radioButtons(
-                               "var2plot",
-                               label = "Select value to plot",
-                               choices = c("Cp" = "Cp", "Concentration" = "Conc")
-                             ),
-                           ),
-                           #End column inputs
-                           column(width = 8,
-                                  #img(src = "images/96-well plot 1.png", width = "99%"),
-                                  #img(src = "images/96-well plot 2.png", width = "99%")
-                                  plotOutput("plot1"), )
-                         ))),
-                tabPanel(title = textOutput("title5"),
-                         fluidPage(fluidRow(
-                           column(
-                             width = 3,
-                             radioButtons(
-                               "var3plot",
-                               label = "Select value to plot",
-                               choices = c("Cp" = "Cp", "Concentration" = "Conc")
-                             ),
-                           ),
-                           #End column inputs
-                           column(width = 8,
-                                  #img(src = "images/96-well plot 1.png", width = "99%"),
-                                  #img(src = "images/96-well plot 2.png", width = "99%")
-                                  plotOutput("plot2"), )
-                         ))),
-                tabPanel(title = textOutput("title6"),
-                         fluidPage(fluidRow(
-                           column(
-                             width = 3,
-                             radioButtons(
-                               "var4plot",
-                               label = "Select value to plot",
-                               choices = c("Cp" = "Cp", "Concentration" = "Conc")
-                             ),
-                           ),
-                           #End column inputs
-                           column(width = 8,
-                                  #img(src = "images/96-well plot 1.png", width = "99%"),
-                                  #img(src = "images/96-well plot 2.png", width = "99%")
-                                  plotOutput("plot3"), )
-                         )))
-              )),
+      tabItem(
+        tabName = "cell",
+        tabBox(
+          width = 12,
+          tabPanel(title = textOutput("title4"),
+                   fluidPage(fluidRow(
+                     column(
+                       width = 3,
+                       radioButtons(
+                         "var2plot",
+                         label = "Select value to plot",
+                         choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                       ),
+                     ),
+                     #End column inputs
+                     column(width = 8,
+                            #img(src = "images/96-well plot 1.png", width = "99%"),
+                            #img(src = "images/96-well plot 2.png", width = "99%")
+                            plotOutput("plot1"),)
+                   ))),
+          tabPanel(title = textOutput("title5"),
+                   fluidPage(fluidRow(
+                     column(
+                       width = 3,
+                       radioButtons(
+                         "var3plot",
+                         label = "Select value to plot",
+                         choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                       ),
+                     ),
+                     #End column inputs
+                     column(width = 8,
+                            #img(src = "images/96-well plot 1.png", width = "99%"),
+                            #img(src = "images/96-well plot 2.png", width = "99%")
+                            plotOutput("plot2"),)
+                   ))),
+          tabPanel(title = textOutput("title6"),
+                   fluidPage(fluidRow(
+                     column(
+                       width = 3,
+                       radioButtons(
+                         "var4plot",
+                         label = "Select value to plot",
+                         choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                       ),
+                     ),
+                     #End column inputs
+                     column(width = 8,
+                            #img(src = "images/96-well plot 1.png", width = "99%"),
+                            #img(src = "images/96-well plot 2.png", width = "99%")
+                            plotOutput("plot3"),)
+                   ))),
+          tabPanel(title = textOutput("title6_bis"),
+                   fluidPage(fluidRow(
+                     column(
+                       width = 3,
+                       radioButtons(
+                         "var4plot_bis",
+                         label = "Select value to plot",
+                         choices = c("Cp" = "Cp", "Concentration" = "Conc")
+                       ),
+                     ),
+                     #End column inputs
+                     column(width = 8,
+                            #img(src = "images/96-well plot 1.png", width = "99%"),
+                            #img(src = "images/96-well plot 2.png", width = "99%")
+                            plotOutput("plot4"),)
+                   ))),
+        )
+      ),
       tabItem(tabName = "plot",
               fluidPage(fluidRow(
                 column(
@@ -387,11 +433,14 @@ ui <- dashboardPage(
                   colourInput("col1", "Fill color first file:", "yellow"),
                   colourInput("col2", "Fill color second file:", "green"),
                   colourInput("col3", "Fill color third file:", "orange"),
+                  colourInput("col4", "Fill color fourth file:", "pink"),
                   colourInput("line1", "Line color first file", "black",
                               palette = "limited"),
                   colourInput("line2", "Line color second file", "black",
                               palette = "limited"),
                   colourInput("line3", "Line color third file", "black",
+                              palette = "limited"),
+                  colourInput("line4", "Line color fourth file", "black",
                               palette = "limited")
                 ),
                 column(
@@ -422,7 +471,8 @@ ui <- dashboardPage(
                         " " = "NULL",
                         "KREC" = "KREC",
                         "TREC" = "TREC",
-                        "ACTB" = "ACTB"
+                        "ACTB" = "ACTB",
+                        "SMN1" = "SMN1"
                       )
                     )
                   ),
@@ -461,16 +511,20 @@ ui <- dashboardPage(
                   )
                 ),
                 fluidRow(
-                  column(4,
-                         div(style = "height:30px;background-color: transparent;"),
-                         tableOutput('summary'),
-                         colourInput("colSummary", "Color", "green",
-                                     palette = "limited")),
+                  column(
+                    4,
+                    div(style = "height:30px;background-color: transparent;"),
+                    tableOutput('summary'),
+                    colourInput("colSummary", "Color", "green",
+                                palette = "limited")
+                  ),
                   column(
                     width = 8,
                     div(style = "height:30px;background-color: transparent;"),
                     plotlyOutput("graph2")
-              )))),
+                  )
+                )
+              )),
       tabItem(
         "report",
         fluidPage(
@@ -496,6 +550,14 @@ ui <- dashboardPage(
               radioButtons(
                 "file3_input",
                 label = "Do you want to include file 3:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
+            ),
+            column(
+              3,
+              radioButtons(
+                "file4_input",
+                label = "Do you want to include file 4:",
                 choices = c("SI" = TRUE, "NO" = FALSE)
               )
             )
@@ -524,6 +586,14 @@ ui <- dashboardPage(
                 label = "Do you want to include well-plot file 3:",
                 choices = c("SI" = TRUE, "NO" = FALSE)
               )
+            ),
+            column(
+              3,
+              radioButtons(
+                "plot4_input",
+                label = "Do you want to include well-plot file 4:",
+                choices = c("SI" = TRUE, "NO" = FALSE)
+              )
             )
           ),
           fluidRow(column(
@@ -539,7 +609,12 @@ ui <- dashboardPage(
           fluidRow(column(
             width = 6,
             textAreaInput("autor", "Autor", width = "400px", height = "40px"),
-            textAreaInput("title_doc", "Título informe", width = "500px", height = "40px")
+            textAreaInput(
+              "title_doc",
+              "Título informe",
+              width = "500px",
+              height = "40px"
+            )
           )),
           fluidRow(column(
             width = 3,
