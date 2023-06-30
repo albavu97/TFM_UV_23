@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <script type="application/shiny-singletons">9e34be8a683ff60410a425b5e4e06b78e409e342</script>
+  <script type="application/html-dependencies">jquery[3.6.0];shiny-css[1.7.4];shiny-javascript[1.7.4];font-awesome[6.4.0];dipsaus[0.2.7];selectize[0.12.4];htmlwidgets[1.6.2];datatables-css[0.0.0];datatables-binding[0.27];crosstalk[1.2.0];bootstrap[3.4.1];colourpicker-binding[0.1.0];colourpicker-lib[0.1.0];plotly-binding[4.10.1];AdminLTE[2.0.6];shinydashboard[0.7.2]</script>
+<script src="jquery-3.6.0/jquery.min.js"></script>
+<link href="shiny-css-1.7.4/shiny.min.css" rel="stylesheet" />
+<script src="shiny-javascript-1.7.4/shiny.min.js"></script>
+<link href="font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+<link href="font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+<link href="dipsaus-0.2.7/dipsaus.css" rel="stylesheet" />
+<script src="dipsaus-0.2.7/dipsaus-dipterix-lib.js"></script>
+<link href="selectize-0.12.4/css/selectize.bootstrap3.css" rel="stylesheet" />
+<script src="selectize-0.12.4/js/selectize.min.js"></script>
+<script src="selectize-0.12.4/accessibility/js/selectize-plugin-a11y.min.js"></script>
+<script src="htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<link href="datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="datatables-binding-0.27/datatables.js"></script>
+<link href="crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet" />
+<link href="bootstrap-3.4.1/accessibility/css/bootstrap-accessibility.min.css" rel="stylesheet" />
+<script src="bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script src="bootstrap-3.4.1/accessibility/js/bootstrap-accessibility.min.js"></script>
+<script src="colourpicker-binding/input_binding_colour.js"></script>
+<link href="colourpicker-lib/css/colourpicker.min.css" rel="stylesheet" />
+<script src="colourpicker-lib/js/colourpicker.min.js"></script>
+<script src="plotly-binding-4.10.1/plotly.js"></script>
+<link href="AdminLTE-2.0.6/AdminLTE.min.css" rel="stylesheet" />
+<link href="AdminLTE-2.0.6/_all-skins.min.css" rel="stylesheet" />
+<script src="AdminLTE-2.0.6/app.min.js"></script>
+<link href="shinydashboard-0.7.2/shinydashboard.css" rel="stylesheet" />
+<script src="shinydashboard-0.7.2/shinydashboard.min.js"></script>  <title>
+    <img src="roche_logo.svg" height="40" width="90"/>
+  </title>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <script src="sF/shinyFiles.js"></script>
+  <link rel="stylesheet" type="text/css" href="sF/styles.css"/>
+  <link rel="stylesheet" type="text/css" href="sF/fileIcons.css"/>
+</head>
+<body class="skin-yellow" style="min-height: 611px;">
+  <div class="wrapper">
+    <header class="main-header">
+      <span class="logo">
+        <img src="roche_logo.svg" height="40" width="90"/>
+      </span>
+      <nav class="navbar navbar-static-top" role="navigation">
+        <span style="display:none;">
+          <i class="fas fa-bars" role="presentation" aria-label="bars icon"></i>
+        </span>
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+          <span class="sr-only">Toggle navigation</span>
+        </a>
+        <div class="navbar-custom-menu">
+          <ul class="nav navbar-nav"></ul>
+        </div>
+      </nav>
+    </header>
+    <aside id="sidebarCollapsed" class="main-sidebar" data-collapsed="false">
+      <section id="sidebarItemExpanded" class="sidebar">
+        <ul class="sidebar-menu">
+          <li>
+            <a href="#shiny-tab-home" data-toggle="tab" data-value="home">
+              <i class="fas fa-house" role="presentation" aria-label="house icon"></i>
+              <span>Home</span>
+            </a>
+          </li>
+          <li>
+            <a href="#shiny-tab-dashboard" data-toggle="tab" data-value="dashboard">
+              <i class="fas fa-table" role="presentation" aria-label="table icon"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#shiny-tab-cell" data-toggle="tab" data-value="cell">
+              <i class="fas fa-flask" role="presentation" aria-label="flask icon"></i>
+              <span>Well plate</span>
+            </a>
+          </li>
+          <li>
+            <a href="#shiny-tab-plot" data-toggle="tab" data-value="plot">
+              <i class="fas fa-chart-simple" role="presentation" aria-label="chart-simple icon"></i>
+              <span>Distribution plots</span>
+            </a>
+          </li>
+          <li>
+            <a href="#shiny-tab-plot_all" data-toggle="tab" data-value="plot_all">
+              <i class="far fa-hand" role="presentation" aria-label="hand icon"></i>
+              <span>Biomarker summary</span>
+            </a>
+          </li>
+          <li>
+            <a href="#shiny-tab-report" data-toggle="tab" data-value="report">
+              <i class="fas fa-download" role="presentation" aria-label="download icon"></i>
+              <span>Report</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <div class="content-wrapper">
+      <section class="content">
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane" id="shiny-tab-home">
+            <div class="row">
+              <div class="col-sm-12">
+                <div style="height:200px;background-color: transparent;"></div>
+              </div>
+            </div>
+            <div style="margin-rigth: 30%;margin-left: 30%;width:40%;height:100px;&#10;                background-color: transparent;text-align:center">
+              <div class="col-sm-12">
+                <div class="box box-solid">
+                  <div class="box-body">
+                    <img src="logo_uni.png" align="center" style="max-width: 100%; height: 100px;"/>
+                    <div style="height:10px;background-color: transparent;"></div>
+                    <div style="height:40px;background-color: transparent;text-align:center">
+                      <div class="form-group shiny-input-container">
+                        <div class="input-group">
+                          <label class="input-group-btn input-group-prepend">
+                            <span class="btn btn-default btn-file">
+                              Upload files
+                              <input id="csvs" name="csvs" type="file" style="position: absolute !important; top: -99999px !important; left: -99999px !important;" multiple="multiple" accept=".xls,text/csv,text/comma-separated-values, text/plain,.csv,.18"/>
+                            </span>
+                          </label>
+                        </div>
+                        <div id="csvs_progress" class="progress active shiny-file-input-progress">
+                          <div class="progress-bar"></div>
+                        </div>
+                      </div>
+                      <style>.shiny-file-input-progress {display: none}</style>
+                    </div>
+                    <div style="height:10px;background-color: transparent;"></div>
+                    <div style="height:40px;background-color: transparent;text-align:center">
+                      <div class="form-group shiny-input-container" style="width:100%;">
+                        <label class="control-label" id="fileId-label" for="fileId">Input File ID</label>
+                        <input id="fileId" type="text" class="form-control" value=""/>
+                      </div>
+                    </div>
+                    <div style="height:40px;background-color: transparent;"></div>
+                    <div style="height:40px;background-color: transparent;text-align:center">
+                      <style>.btn-default{
+  background-color: #2CA666;
+    color: white;
+    border-color: black;
+    font-weight: bold;
+}</style>
+                      <button id="dir" type="button" class="shinyDirectories btn btn-default action-button" data-title="Upload" viewtype="detail">
+                        <i class="far fa-folder" role="presentation" aria-label="folder icon"></i>
+                        Input directory
+                      </button>
+                    </div>
+                    <div style="height:20px;background-color: transparent;"></div>
+                    <div style="height:40px;background-color: transparent;text-align:center">
+                      <button style="width: 110px;" id="reset" type="button" class="btn btn-info action-button ">
+                        <i class="fas fa-house" role="presentation" aria-label="house icon"></i>
+                        Reset input
+                      </button>
+                    </div>
+                    <div style="height:10px;background-color: transparent;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="shiny-tab-dashboard">
+            <div class="row">
+              <style>
+             .btn-file {
+             background-color:black;
+             border-color: white;
+             color:white;
+             display: inline-block;
+             font-size: 16px;
+             font-weight: bold;
+             vertical-align: middle;
+             }
+
+             .progress-bar {
+             visibility: hidden;
+             background-color:white;
+             width: 100px;
+             color:black;
+             }
+
+             </style>
+              <div class="col-sm-12">
+                <div class="nav-tabs-custom">
+                  <ul class="nav nav-tabs" data-tabsetid="6398">
+                    <li class="active">
+                      <a href="#tab-6398-1" data-toggle="tab" data-bs-toggle="tab" data-value="&lt;div id=&quot;title1&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;">
+                        <div id="title1" class="shiny-text-output"></div>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#tab-6398-2" data-toggle="tab" data-bs-toggle="tab" data-value="&lt;div id=&quot;title2&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;">
+                        <div id="title2" class="shiny-text-output"></div>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#tab-6398-3" data-toggle="tab" data-bs-toggle="tab" data-value="&lt;div id=&quot;title3&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;">
+                        <div id="title3" class="shiny-text-output"></div>
+                      </a>
+                    </li>
+                  </ul>
+                  <div class="tab-content" data-tabsetid="6398">
+                    <div class="tab-pane active" data-value="&lt;div id=&quot;title1&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;" id="tab-6398-1" style="width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;">
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-primary bg-blue">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="cpSelect1-label" for="cpSelect1"></label>
+                              <div>
+                                <select id="cpSelect1"><option value="" selected></option></select>
+                                <script type="application/json" data-for="cpSelect1">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-warning bg-orange">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="colorInput1-label" for="colorInput1"></label>
+                              <div>
+                                <select id="colorInput1"><option value="" selected></option></select>
+                                <script type="application/json" data-for="colorInput1">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-info bg-green">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="PosSelect1-label" for="PosSelect1"></label>
+                              <div>
+                                <select id="PosSelect1" class="form-control" multiple="multiple"><option value=""></option></select>
+                                <script type="application/json" data-for="PosSelect1">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid">
+                          <div class="box-body">
+                            <div style="height:40px;background-color: transparent;text-align:center">
+                              <button style="width: 110px;" id="reset2" type="button" class="btn btn-info action-button ">
+                                <i class="fas fa-house" role="presentation" aria-label="house icon"></i>
+                                Reset input
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="datatables html-widget html-widget-output shiny-report-size html-fill-item-overflow-hidden html-fill-item" id="contents" style="width:98%;height:98%;"></div>
+                    </div>
+                    <div class="tab-pane" data-value="&lt;div id=&quot;title2&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;" style="width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;" id="tab-6398-2">
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-primary bg-blue">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="cpSelect2-label" for="cpSelect2"></label>
+                              <div>
+                                <select id="cpSelect2"><option value="" selected></option></select>
+                                <script type="application/json" data-for="cpSelect2">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-warning bg-orange">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="colorInput2-label" for="colorInput2"></label>
+                              <div>
+                                <select id="colorInput2"><option value="" selected></option></select>
+                                <script type="application/json" data-for="colorInput2">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-info bg-green">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="PosSelect2-label" for="PosSelect2"></label>
+                              <div>
+                                <select id="PosSelect2" class="form-control" multiple="multiple"><option value=""></option></select>
+                                <script type="application/json" data-for="PosSelect2">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid">
+                          <div class="box-body">
+                            <div style="height:40px;background-color: transparent;text-align:center">
+                              <button style="width: 110px;" id="reset3" type="button" class="btn btn-info action-button ">
+                                <i class="fas fa-house" role="presentation" aria-label="house icon"></i>
+                                Reset input
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="datatables html-widget html-widget-output shiny-report-size html-fill-item-overflow-hidden html-fill-item" id="contents2" style="width:98%;height:98%;"></div>
+                    </div>
+                    <div class="tab-pane" data-value="&lt;div id=&quot;title3&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;" style="width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;" id="tab-6398-3">
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-primary bg-blue">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="cpSelect3-label" for="cpSelect3"></label>
+                              <div>
+                                <select id="cpSelect3"><option value="" selected></option></select>
+                                <script type="application/json" data-for="cpSelect3">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-warning bg-orange">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="colorInput3-label" for="colorInput3"></label>
+                              <div>
+                                <select id="colorInput3"><option value="" selected></option></select>
+                                <script type="application/json" data-for="colorInput3">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid box-info bg-green">
+                          <div class="box-body">
+                            <div class="form-group shiny-input-container">
+                              <label class="control-label" id="PosSelect3-label" for="PosSelect3"></label>
+                              <div>
+                                <select id="PosSelect3" class="form-control" multiple="multiple"><option value=""></option></select>
+                                <script type="application/json" data-for="PosSelect3">{"plugins":["selectize-plugin-a11y"]}</script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-3">
+                        <div class="box box-solid">
+                          <div class="box-body">
+                            <div style="height:40px;background-color: transparent;text-align:center">
+                              <button style="width: 110px;" id="reset4" type="button" class="btn btn-info action-button ">
+                                <i class="fas fa-house" role="presentation" aria-label="house icon"></i>
+                                Reset input
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="datatables html-widget html-widget-output shiny-report-size html-fill-item-overflow-hidden html-fill-item" id="contents3" style="width:98%;height:98%;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="shiny-tab-cell">
+            <div class="col-sm-12">
+              <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs" data-tabsetid="7017">
+                  <li class="active">
+                    <a href="#tab-7017-1" data-toggle="tab" data-bs-toggle="tab" data-value="&lt;div id=&quot;title4&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;">
+                      <div id="title4" class="shiny-text-output"></div>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#tab-7017-2" data-toggle="tab" data-bs-toggle="tab" data-value="&lt;div id=&quot;title5&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;">
+                      <div id="title5" class="shiny-text-output"></div>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#tab-7017-3" data-toggle="tab" data-bs-toggle="tab" data-value="&lt;div id=&quot;title6&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;">
+                      <div id="title6" class="shiny-text-output"></div>
+                    </a>
+                  </li>
+                </ul>
+                <div class="tab-content" data-tabsetid="7017">
+                  <div class="tab-pane active" data-value="&lt;div id=&quot;title4&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;" id="tab-7017-1">
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <div id="var2plot" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="var2plot-label">
+                            <label class="control-label" id="var2plot-label" for="var2plot">Select value to plot</label>
+                            <div class="shiny-options-group">
+                              <div class="radio">
+                                <label>
+                                  <input type="radio" name="var2plot" value="Cp" checked="checked"/>
+                                  <span>Cp</span>
+                                </label>
+                              </div>
+                              <div class="radio">
+                                <label>
+                                  <input type="radio" name="var2plot" value="Conc"/>
+                                  <span>Concentration</span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-8">
+                          <div class="shiny-plot-output html-fill-item" id="plot1" style="width:100%;height:400px;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" data-value="&lt;div id=&quot;title5&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;" id="tab-7017-2">
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <div id="var3plot" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="var3plot-label">
+                            <label class="control-label" id="var3plot-label" for="var3plot">Select value to plot</label>
+                            <div class="shiny-options-group">
+                              <div class="radio">
+                                <label>
+                                  <input type="radio" name="var3plot" value="Cp" checked="checked"/>
+                                  <span>Cp</span>
+                                </label>
+                              </div>
+                              <div class="radio">
+                                <label>
+                                  <input type="radio" name="var3plot" value="Conc"/>
+                                  <span>Concentration</span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-8">
+                          <div class="shiny-plot-output html-fill-item" id="plot2" style="width:100%;height:400px;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane" data-value="&lt;div id=&quot;title6&quot; class=&quot;shiny-text-output&quot;&gt;&lt;/div&gt;" id="tab-7017-3">
+                    <div class="container-fluid">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <div id="var4plot" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="var4plot-label">
+                            <label class="control-label" id="var4plot-label" for="var4plot">Select value to plot</label>
+                            <div class="shiny-options-group">
+                              <div class="radio">
+                                <label>
+                                  <input type="radio" name="var4plot" value="Cp" checked="checked"/>
+                                  <span>Cp</span>
+                                </label>
+                              </div>
+                              <div class="radio">
+                                <label>
+                                  <input type="radio" name="var4plot" value="Conc"/>
+                                  <span>Concentration</span>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-8">
+                          <div class="shiny-plot-output html-fill-item" id="plot3" style="width:100%;height:400px;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="shiny-tab-plot">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-3">
+                  <div class="form-group shiny-input-container">
+                    <label class="control-label" id="type_plot-label" for="type_plot">Select type of plot</label>
+                    <div>
+                      <select id="type_plot"><option value="NULL" selected> </option>
+<option value="boxplot">Box Plot</option>
+<option value="violin">Violin</option></select>
+                      <script type="application/json" data-for="type_plot" data-nonempty="">{"plugins":["selectize-plugin-a11y"]}</script>
+                    </div>
+                  </div>
+                  <div class="form-group shiny-input-container" data-shiny-input-type="colour">
+                    <label class="control-label" for="col1">Fill color first file:</label>
+                    <input id="col1" type="text" class="form-control shiny-colour-input" data-init-value="yellow" data-show-colour="both" data-palette="square"/>
+                  </div>
+                  <div class="form-group shiny-input-container" data-shiny-input-type="colour">
+                    <label class="control-label" for="col2">Fill color second file:</label>
+                    <input id="col2" type="text" class="form-control shiny-colour-input" data-init-value="green" data-show-colour="both" data-palette="square"/>
+                  </div>
+                  <div class="form-group shiny-input-container" data-shiny-input-type="colour">
+                    <label class="control-label" for="col3">Fill color third file:</label>
+                    <input id="col3" type="text" class="form-control shiny-colour-input" data-init-value="orange" data-show-colour="both" data-palette="square"/>
+                  </div>
+                  <div class="form-group shiny-input-container" data-shiny-input-type="colour">
+                    <label class="control-label" for="line1">Line color first file</label>
+                    <input id="line1" type="text" class="form-control shiny-colour-input" data-init-value="black" data-show-colour="both" data-palette="limited"/>
+                  </div>
+                  <div class="form-group shiny-input-container" data-shiny-input-type="colour">
+                    <label class="control-label" for="line2">Line color second file</label>
+                    <input id="line2" type="text" class="form-control shiny-colour-input" data-init-value="black" data-show-colour="both" data-palette="limited"/>
+                  </div>
+                  <div class="form-group shiny-input-container" data-shiny-input-type="colour">
+                    <label class="control-label" for="line3">Line color third file</label>
+                    <input id="line3" type="text" class="form-control shiny-colour-input" data-init-value="black" data-show-colour="both" data-palette="limited"/>
+                  </div>
+                </div>
+                <div class="col-sm-9">
+                  <div class="plotly html-widget html-widget-output shiny-report-size shiny-report-theme html-fill-item-overflow-hidden html-fill-item" id="graph" style="width:100%;height:400px;"></div>
+                  <div style="height:10px;background-color: transparent;"></div>
+                  <div class="plotly html-widget html-widget-output shiny-report-size shiny-report-theme html-fill-item-overflow-hidden html-fill-item" id="graph_bigotes" style="width:100%;height:400px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="shiny-tab-plot_all">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-3">
+                  <div class="form-group shiny-input-container">
+                    <label class="control-label" id="type_file-label" for="type_file">Select the biomarker to plot</label>
+                    <div>
+                      <select id="type_file"><option value="NULL" selected> </option>
+<option value="KREC">KREC</option>
+<option value="TREC">TREC</option>
+<option value="ACTB">ACTB</option></select>
+                      <script type="application/json" data-for="type_file" data-nonempty="">{"plugins":["selectize-plugin-a11y"]}</script>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <button id="dir2" type="button" class="shinyDirectories btn btn-default action-button" data-title="Upload" viewtype="detail">
+                    <i class="far fa-folder" role="presentation" aria-label="folder icon"></i>
+                    Input directory
+                  </button>
+                  <div style="height:10px;background-color: transparent;"></div>
+                  <button style="width: 100%;" id="display" type="button" class="btn btn-warning action-button ">Display</button>
+                </div>
+                <div class="col-sm-3">
+                  <button style="width: 110px;" id="reset11" type="button" class="btn btn-info action-button ">
+                    <i class="fas fa-house" role="presentation" aria-label="house icon"></i>
+                    Reset input
+                  </button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8" style="width:100%;overflow-x: scroll;height:100%;overflow-y: scroll;">
+                  <div class="datatables html-widget html-widget-output shiny-report-size html-fill-item-overflow-hidden html-fill-item" id="plot_big" style="width:98%;height:98%;"></div>
+                  <div style="height:50px;background-color: transparent;"></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div style="height:30px;background-color: transparent;"></div>
+                  <div id="summary" class="shiny-html-output"></div>
+                  <div class="form-group shiny-input-container" data-shiny-input-type="colour">
+                    <label class="control-label" for="colSummary">Color</label>
+                    <input id="colSummary" type="text" class="form-control shiny-colour-input" data-init-value="green" data-show-colour="both" data-palette="limited"/>
+                  </div>
+                </div>
+                <div class="col-sm-8">
+                  <div style="height:30px;background-color: transparent;"></div>
+                  <div class="plotly html-widget html-widget-output shiny-report-size shiny-report-theme html-fill-item-overflow-hidden html-fill-item" id="graph2" style="width:100%;height:400px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="shiny-tab-report">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-3">
+                  <div id="file1_input" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="file1_input-label">
+                    <label class="control-label" id="file1_input-label" for="file1_input">Do you want to include file 1:</label>
+                    <div class="shiny-options-group">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="file1_input" value="TRUE" checked="checked"/>
+                          <span>SI</span>
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="file1_input" value="FALSE"/>
+                          <span>NO</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <div id="file2_input" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="file2_input-label">
+                    <label class="control-label" id="file2_input-label" for="file2_input">Do you want to include file 2:</label>
+                    <div class="shiny-options-group">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="file2_input" value="TRUE" checked="checked"/>
+                          <span>SI</span>
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="file2_input" value="FALSE"/>
+                          <span>NO</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <div id="file3_input" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="file3_input-label">
+                    <label class="control-label" id="file3_input-label" for="file3_input">Do you want to include file 3:</label>
+                    <div class="shiny-options-group">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="file3_input" value="TRUE" checked="checked"/>
+                          <span>SI</span>
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="file3_input" value="FALSE"/>
+                          <span>NO</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3">
+                  <div id="plot1_input" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="plot1_input-label">
+                    <label class="control-label" id="plot1_input-label" for="plot1_input">Do you want to include well-plot file 1:</label>
+                    <div class="shiny-options-group">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="plot1_input" value="TRUE" checked="checked"/>
+                          <span>SI</span>
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="plot1_input" value="FALSE"/>
+                          <span>NO</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <div id="plot2_input" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="plot2_input-label">
+                    <label class="control-label" id="plot2_input-label" for="plot2_input">Do you want to include well-plot file 2:</label>
+                    <div class="shiny-options-group">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="plot2_input" value="TRUE" checked="checked"/>
+                          <span>SI</span>
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="plot2_input" value="FALSE"/>
+                          <span>NO</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <div id="plot3_input" class="form-group shiny-input-radiogroup shiny-input-container" role="radiogroup" aria-labelledby="plot3_input-label">
+                    <label class="control-label" id="plot3_input-label" for="plot3_input">Do you want to include well-plot file 3:</label>
+                    <div class="shiny-options-group">
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="plot3_input" value="TRUE" checked="checked"/>
+                          <span>SI</span>
+                        </label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio" name="plot3_input" value="FALSE"/>
+                          <span>NO</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8">
+                  <div class="form-group shiny-input-container" style="width: 1000px;">
+                    <label class="control-label" id="comment-label" for="comment">Comments to include in report</label>
+                    <textarea id="comment" class="form-control" style="width:width: 100%;;height:200px;">Comments</textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="form-group shiny-input-container" style="width: 400px;">
+                    <label class="control-label" id="autor-label" for="autor">Autor</label>
+                    <textarea id="autor" class="form-control" style="width:width: 100%;;height:40px;"></textarea>
+                  </div>
+                  <div class="form-group shiny-input-container" style="width: 500px;">
+                    <label class="control-label" id="title_doc-label" for="title_doc">Título informe</label>
+                    <textarea id="title_doc" class="form-control" style="width:width: 100%;;height:40px;"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3">
+                  <a id="report_gen" class="btn btn-default shiny-download-link " href="" target="_blank" download>
+                    <i class="fas fa-download" role="presentation" aria-label="download icon"></i>
+                    Create my report
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

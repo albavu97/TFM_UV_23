@@ -1,0 +1,59 @@
+---
+title: "report_template"
+date: "`r Sys.time()`"
+output: pdf_document
+classoption: landscape
+# params begin as NA and then are overwritten by the object passed in as params in the render function
+# inside the donloadHandler function in the server function of the app.
+params:
+  imported: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+require(kableExtra)
+require(dplyr)
+
+```
+
+
+## Quick view of the data:
+
+```{r table, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# objects passed as params are accessed from params$imported
+params$imported$dat_table %>% 
+  kable()
+  
+```
+
+\pagebreak
+
+## Relationships between all variables:
+
+```{r pairs, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Since we only want a few of the variables in the ggpairs plot,
+# we use a copy of the original data that we passes to the markdown 
+# in the "imported" reactiveValues object
+
+params$imported$reg_dat %>% 
+  ggpairs()
+
+```
+
+\pagebreak
+
+## Summary of `r as.character(params$imported$dep_var)` ~ x1 ... xi:
+
+Tabla sumario de todo lo que se ha puesto en el archivo
+
+```{r sum, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+params$imported$reg_sum
+
+```
