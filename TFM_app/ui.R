@@ -63,7 +63,7 @@ ui <- dashboardPage(
                 background-color: transparent;text-align:center",
           box(
             img(
-              src = 'logo_uni.png',
+              src = 'neocribsmart.jpg',
               align = "center",
               style = paste0("max-width: 100%; height: ", my_height, ";")
             ),
