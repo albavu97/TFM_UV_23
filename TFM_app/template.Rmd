@@ -64,21 +64,44 @@ if(plot1 == "FALSE"){
 }else{
   show_plot <- TRUE
 }
-if(plot2 == "FALSE" | length(params$imported$lista)<2 | length(params$imported$lista)>3){
+if(plot2 == "FALSE"){
   show_plot2 <- FALSE
 }else{
   show_plot2 <- TRUE
 }
-if(plot3 == "FALSE"| length(params$imported$lista)<3 | length(params$imported$lista)>3){
+if(plot3 == "FALSE"){
   show_plot3 <- FALSE
 }else{
   show_plot3 <- TRUE
 }
 
-if(plot4 == "FALSE"| length(params$imported$lista)<4){
+if(plot4 == "FALSE"){
   show_plot4 <- FALSE
 }else{
   show_plot4 <- TRUE
+}
+
+# Plot boxplot with all files and violin
+if(length(params$imported$lista)>1){
+  show_plot_unique <- FALSE
+}else{
+  show_plot_unique <- TRUE
+}
+if(plot2 == "FALSE" | length(params$imported$lista)<2 | length(params$imported$lista)>3){
+  show_plot_unique2 <- FALSE
+}else{
+  show_plot_unique2 <- TRUE
+}
+if(plot3 == "FALSE"| length(params$imported$lista)<3 | length(params$imported$lista)>3){
+  show_plot_unique3 <- FALSE
+}else{
+  show_plot_unique3 <- TRUE
+}
+
+if(plot4 == "FALSE"| length(params$imported$lista)<4){
+  show_plot_unique4 <- FALSE
+}else{
+  show_plot_unique4 <- TRUE
 }
 
 if(length(params$imported$lista)==1){
@@ -131,7 +154,8 @@ require(dplyr)
 # Tablas asociados a los archivos
 
 ```{r table, echo=FALSE, eval=show_text,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Tabla primer archivo")
+cat("## Tabla primer archivo ")
+cat(params$imported$lista[1])
 
 # objects passed as params are accessed from params$imported
 params$imported$dat_table %>% 
@@ -140,7 +164,8 @@ params$imported$dat_table %>%
 ```
 
 ```{r comment_data1, echo=FALSE, eval=comment_data1,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Comentarios introducidos primera tabla:")
+cat("## Comentarios introducidos primera tabla ")
+cat(params$imported$lista[1])
 cat("\n")
 
 cat(params$imported$comment_data1)
@@ -148,7 +173,8 @@ cat(params$imported$comment_data1)
 
 
 ```{r table2, echo=FALSE,eval=show_text2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Tabla segundo archivo")
+cat("## Tabla segundo archivo ")
+cat(params$imported$lista[2])
 
 # objects passed as params are accessed from params$imported
 params$imported$dat_table2 %>% 
@@ -157,14 +183,16 @@ params$imported$dat_table2 %>%
 ```
 
 ```{r comment_data2, echo=FALSE, eval=comment_data2,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Comentarios introducidos segunda tabla:")
+cat("## Comentarios introducidos segunda tabla ")
+cat(params$imported$lista[2])
 cat("\n")
 
 cat(params$imported$comment_data2)
 ```
 
 ```{r table3, echo=FALSE,eval=show_text3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Tabla tercer archivo")
+cat("## Tabla tercer archivo ")
+cat(params$imported$lista[3])
 
 # objects passed as params are accessed from params$imported
 params$imported$dat_table3 %>% 
@@ -173,14 +201,16 @@ params$imported$dat_table3 %>%
 ```
 
 ```{r comment_data3, echo=FALSE, eval=comment_data3,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Comentarios introducidos tercera tabla:")
+cat("## Comentarios introducidos tercera tabla ")
+cat(params$imported$lista[3])
 cat("\n")
 
 cat(params$imported$comment_data3)
 ```
 
 ```{r table4, echo=FALSE,eval=show_text4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Tabla cuarto archivo")
+cat("## Tabla cuarto archivo ")
+cat(params$imported$lista[4])
 
 # objects passed as params are accessed from params$imported
 params$imported$dat_table4 %>% 
@@ -189,14 +219,16 @@ params$imported$dat_table4 %>%
 ```
 
 ```{r comment_data4, echo=FALSE, eval=comment_data4,message=FALSE, warning=FALSE, paged.print=FALSE,results='asis'}
-cat("## Comentarios introducidos cuarta tabla:")
+cat("## Comentarios introducidos del cuarto archivo ")
+cat(params$imported$lista[4])
 cat("\n")
 
 cat(params$imported$comment_data4)
 ```
 
 ``` {r boxplot, echo=FALSE, eval= show_plot, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
-cat("## 96-Well plot primer archivo")
+cat("## 96-Well plot primer archivo ")
+cat(params$imported$lista[1])
 
 
 ggplot(data = params$imported$boxplot) +
@@ -216,7 +248,6 @@ ggplot(data = params$imported$boxplot) +
       ) +
       scale_fill_gradientn(colours = terrain.colors(40)) +
       labs(
-        title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
         y = "Row"
@@ -225,7 +256,8 @@ ggplot(data = params$imported$boxplot) +
 ```
 
 ``` {r boxplot2, echo=FALSE,eval=show_plot2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
-cat("## 96-Well plot segundo archivo")
+cat("## 96-Well plot segundo archivo ")
+cat(params$imported$lista[2])
 
 ggplot(data = params$imported$boxplot2) +
       geom_circle(aes(
@@ -244,7 +276,6 @@ ggplot(data = params$imported$boxplot2) +
       ) +
       scale_fill_gradientn(colours = terrain.colors(40)) +
       labs(
-        title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
         y = "Row"
@@ -253,7 +284,8 @@ ggplot(data = params$imported$boxplot2) +
 ```
 
 ``` {r boxplot3, echo=FALSE, eval=show_plot3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
-cat("## 96-Well plot tercer archivo")
+cat("## 96-Well plot tercer archivo ")
+cat(params$imported$lista[3])
 
 ggplot(data = params$imported$boxplot3) +
       geom_circle(aes(
@@ -272,7 +304,6 @@ ggplot(data = params$imported$boxplot3) +
       ) +
       scale_fill_gradientn(colours = terrain.colors(40)) +
       labs(
-        title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
         y = "Row"
@@ -281,7 +312,8 @@ ggplot(data = params$imported$boxplot3) +
 ```
 
 ``` {r boxplot4, echo=FALSE, eval=show_plot4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
-cat("## 96-Well plot cuarto archivo")
+cat("## 96-Well plot cuarto archivo ")
+cat(params$imported$lista[4])
 
 ggplot(data = params$imported$boxplot4) +
       geom_circle(aes(
@@ -300,7 +332,6 @@ ggplot(data = params$imported$boxplot4) +
       ) +
       scale_fill_gradientn(colours = terrain.colors(40)) +
       labs(
-        title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
         y = "Row"
@@ -333,7 +364,7 @@ p + geom_violin()
 
 ```
 
-``` {r boxplot_long2, echo=FALSE,eval=show_plot2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+``` {r boxplot_long2, echo=FALSE,eval=show_plot_unique2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
 var1 <- params$imported$lista[1]
 var2 <- params$imported$lista[2]
 
@@ -356,7 +387,7 @@ p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
 p + geom_violin()
 ```
 
-``` {r boxplot_long3, echo=FALSE,eval=show_plot3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
+``` {r boxplot_long3, echo=FALSE,eval=show_plot_unique3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
 var1 <- params$imported$lista[1]
 var2 <- params$imported$lista[2]
 var3 <- params$imported$lista[3]
@@ -383,7 +414,7 @@ p + geom_violin()
 
 ```
 
-``` {r boxplot_long4, echo=FALSE,eval=show_plot4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
+``` {r boxplot_long4, echo=FALSE,eval=show_plot_unique4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
 var1 <- params$imported$lista[1]
 var2 <- params$imported$lista[2]
 var3 <- params$imported$lista[3]
