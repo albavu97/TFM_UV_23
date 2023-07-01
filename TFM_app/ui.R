@@ -17,7 +17,8 @@ my_height = "100px"
 
 ui <- dashboardPage(
   skin = "yellow",
-  dashboardHeader(title = tags$img(
+  dashboardHeader(
+    title = tags$img(
     src = "roche_logo.svg",
     height = 40,
     width = 90

@@ -5,11 +5,11 @@ require(ggforce)
 require(scales)
 
 
+
 server <- function(input, output, session) {
   # initialize reactiveValues object that will contain the plots/data that we will
   # pass to the R Markdown document
   my_vals <- reactiveValues()
-  
   
   output$menuitem <- renderMenu({
     menuItem("Menu item", icon = icon("calendar"))
@@ -254,7 +254,7 @@ server <- function(input, output, session) {
     output$title4 <- renderText(global$lista[1])
     output$title5 <- renderText(global$lista[2])
     output$title6 <- renderText(global$lista[3])
-    output$title6_bis <- renderText(global$lista[3])
+    output$title6_bis <- renderText(global$lista[4])
   })
   
   titleUpdate3 <- reactive({
@@ -810,7 +810,9 @@ server <- function(input, output, session) {
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = terrain.colors(40)) +
+      scale_fill_gradientn(colours = terrain.colors(40),na.value = "white",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40))+
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
@@ -819,6 +821,7 @@ server <- function(input, output, session) {
       ) +
       theme_bw()
   })
+  
   
   output$plot2 <- renderPlot({
     # check input data and rise an error message if none
@@ -838,7 +841,10 @@ server <- function(input, output, session) {
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = heat.colors(40)) +
+      #scale_fill_gradientn(colours = rainbow(6)) +
+      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40))+
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
@@ -866,7 +872,10 @@ server <- function(input, output, session) {
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = topo.colors(40)) +
+      scale_fill_gradientn(colours = topo.colors(6)
+                           ,na.value = "transparent",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40))+
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",
@@ -894,7 +903,9 @@ server <- function(input, output, session) {
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = topo.colors(40)) +
+      scale_fill_gradientn(colours = topo.colors(6),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40)) +
       labs(
         title = "96 Well plate of TRECs",
         subtitle = "Cp or log10(Conc) values",

@@ -246,7 +246,9 @@ ggplot(data = params$imported$boxplot) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = terrain.colors(40)) +
+      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40))+
       labs(
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
@@ -274,7 +276,9 @@ ggplot(data = params$imported$boxplot2) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = terrain.colors(40)) +
+      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40))+
       labs(
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
@@ -302,7 +306,9 @@ ggplot(data = params$imported$boxplot3) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = terrain.colors(40)) +
+      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40))+
       labs(
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
@@ -330,7 +336,9 @@ ggplot(data = params$imported$boxplot4) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = terrain.colors(40)) +
+      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+                           limits=c(0,40))+
       labs(
         subtitle = "Cp or log10(Conc) values",
         x = "Col",
@@ -359,7 +367,7 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
-p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 
 ```
@@ -383,7 +391,7 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
-p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 ```
 
@@ -409,7 +417,7 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
-p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 
 ```
@@ -439,7 +447,7 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
-p <- ggplot(df.m,aes(x = variable, y = value,fill=value))
+p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 
 ```
