@@ -3,13 +3,21 @@ library(DT)
 library(data.table)
 require(ggforce)
 require(scales)
+library(ggplate)
 
+# ----------------------------------
+# app.R
+# Server: Aquí está el controlador de los inputs y outputs de ui.R
+# ----------------------------------
 
 
 server <- function(input, output, session) {
-  # initialize reactiveValues object that will contain the plots/data that we will
-  # pass to the R Markdown document
+  # inicializamos reactiveValues que contendrán los datos/objetos
+  # que se pasaran al R markdown document
   my_vals <- reactiveValues()
+  # Este objeto contendrá los datos asociados a los archivos 
+  global <- reactiveValues(datapath = getwd())
+  dir <- reactive(input$dir)
   
   output$menuitem <- renderMenu({
     menuItem("Menu item", icon = icon("calendar"))
@@ -22,6 +30,8 @@ server <- function(input, output, session) {
     roots = c(home = '~'),
     filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw")
   )
+  
+  # Controla cuando se mete el id del archivo
   observeEvent(input$fileId, {
     fileId <- reactive(toString(input$fileId))
     output$idOut <- renderText({
@@ -30,11 +40,7 @@ server <- function(input, output, session) {
     global$file <- fileId()
   })
   
-  global <- reactiveValues(datapath = getwd())
-  
-  dir <- reactive(input$dir)
-  
-  
+  # Primera tabla de los archivos
   render1 <- reactive({
     output$contents <- renderDT({
       datatable(
@@ -54,6 +60,8 @@ server <- function(input, output, session) {
       )
     })
   })
+  
+  # Segunda tabla de archivos
   render2 <- reactive({
     output$contents2 <- renderDT({
       datatable(
@@ -74,6 +82,7 @@ server <- function(input, output, session) {
     })
   })
   
+  # Tercera tabla de archivos
   render3 <- reactive({
     output$contents3 <- renderDT({
       datatable(
@@ -94,6 +103,7 @@ server <- function(input, output, session) {
     })
   })
   
+  # Cuarta tabla de archivos
   render4 <- reactive({
     output$contents3_bis <- renderDT({
       datatable(
@@ -113,6 +123,7 @@ server <- function(input, output, session) {
       )
     })
   })
+  
   
   observeEvent(ignoreNULL = TRUE,
                eventExpr = {
@@ -232,12 +243,6 @@ server <- function(input, output, session) {
         header = TRUE,
         skip = 1
       )
-    # fread(
-    #   paste0(global$datapath, '/', global$lista[number]),
-    #   header = TRUE,
-    #   sep = "\t",
-    #   data.table = FALSE
-    # )
     #Quitamos la columna Name para que no haya problemas
     tmp2 <- tmp[, !(names(tmp) %in% "Name")]
     tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
@@ -792,6 +797,7 @@ server <- function(input, output, session) {
       mutate(well = paste0(LETTERS[row], col))
   }
   
+  
   output$plot1 <- renderPlot({
     # check input data and rise an error message if none
     #validate(need(csvs(1), "Please, upload a data set with data 1"))
@@ -810,7 +816,7 @@ server <- function(input, output, session) {
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours = terrain.colors(40),na.value = "white",
+      scale_fill_gradientn(colours = rainbow(6),na.value = "white",
                            breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
                            limits=c(0,40))+
       labs(
@@ -831,7 +837,8 @@ server <- function(input, output, session) {
         x0 = col,
         y0 = row,
         r = 0.5,
-        fill = as.numeric(value)
+        fill = as.numeric(value),
+        label = as.numeric(value)
       )) +
       coord_equal() +
       scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
@@ -841,7 +848,6 @@ server <- function(input, output, session) {
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      #scale_fill_gradientn(colours = rainbow(6)) +
       scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
                            breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
                            limits=c(0,40))+
@@ -1090,8 +1096,13 @@ server <- function(input, output, session) {
           fig %>% add_boxplot(
             y = csvs(2)$Cp,
             name = global$lista[2],
-            boxpoints = FALSE,
-            marker = list(color = input$line2),
+            boxpoints = 'suspectedoutliers',
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
             line = list(color = input$line2),
             fillcolor = input$col2,
           )
@@ -1113,8 +1124,13 @@ server <- function(input, output, session) {
           fig %>% add_boxplot(
             y = csvs(4)$Cp,
             name = global$lista[4],
-            boxpoints = FALSE,
-            marker = list(color = input$line4),
+            boxpoints = 'suspectedoutliers',
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
             line = list(color = input$line4),
             fillcolor = input$col4,
           )
@@ -1140,8 +1156,13 @@ server <- function(input, output, session) {
           fig %>% add_boxplot(
             y = csvs(2)$Cp,
             name = global$lista[2],
-            boxpoints = FALSE,
-            marker = list(color = input$line2),
+            boxpoints = 'suspectedoutliers',
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
             line = list(color = input$line2),
             fillcolor = input$col2,
           )
@@ -1171,7 +1192,12 @@ server <- function(input, output, session) {
             jitter = 0.3,
             pointpos = -1.8,
             boxpoints = 'all',
-            marker = list(color = input$line1),
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
             line = list(color = input$line1),
             fillcolor = input$col1,
             name = global$lista[1]
@@ -1180,8 +1206,13 @@ server <- function(input, output, session) {
           fig %>% add_boxplot(
             y = csvs(2)$Cp,
             name = global$lista[2],
-            boxpoints = FALSE,
-            marker = list(color = input$line2),
+            boxpoints = 'suspectedoutliers',
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
             line = list(color = input$line2),
             fillcolor = input$col2,
           )
@@ -1197,7 +1228,12 @@ server <- function(input, output, session) {
             jitter = 0.3,
             pointpos = -1.8,
             boxpoints = 'all',
-            marker = list(color = input$line1),
+            marker = list(
+              color = 'rgb(8,81,156)',
+              outliercolor = 'rgba(219, 64, 82, 0.6)',
+              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                          outlierwidth = 2)
+            ),
             line = list(color = input$line1),
             fillcolor = input$col1,
             name = global$lista[1]
