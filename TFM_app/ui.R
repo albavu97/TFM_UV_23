@@ -13,6 +13,16 @@ library(colourpicker)
 library(shinyFiles)
 library(plotly)
 
+# ----------------------------------
+# ui.R
+# Descripción: Archivo con todos los elementos de la interfaz gráfica
+# ----------------------------------
+
+# ----------------------------------
+# dashboardPage
+# Descripción: establece el formato de toda la página diviendo luego por Header, body
+# ----------------------------------
+
 my_height = "100px"
 
 ui <- dashboardPage(
@@ -365,7 +375,7 @@ ui <- dashboardPage(
                      column(width = 8,
                             #img(src = "images/96-well plot 1.png", width = "99%"),
                             #img(src = "images/96-well plot 2.png", width = "99%")
-                            plotOutput("plot1"),)
+                            plotOutput("plot1"))
                    ))),
           tabPanel(title = textOutput("title5"),
                    fluidPage(fluidRow(
