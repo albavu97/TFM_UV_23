@@ -15,7 +15,7 @@ server <- function(input, output, session) {
   # inicializamos reactiveValues que contendrán los datos/objetos
   # que se pasaran al R markdown document
   my_vals <- reactiveValues()
-  # Este objeto contendrá los datos asociados a los archivos 
+  # Este objeto contendrá los datos asociados a los archivos
   global <- reactiveValues(datapath = getwd())
   dir <- reactive(input$dir)
   
@@ -150,9 +150,11 @@ server <- function(input, output, session) {
                  global$datapath <-
                    file.path(home, paste(unlist(dir()$path[-1]), collapse = .Platform$file.sep))
                  global$lista <-
-                   list.files(global$datapath,
-                              pattern = global$file,
-                              recursive = TRUE)
+                   list.files(
+                     global$datapath,
+                     pattern = paste0("^", global$file, "([^0-9]|$)"),
+                     recursive = TRUE
+                   )
                  my_vals$lista <- global$lista
                  if (length(global$lista) == 1) {
                    shinyalert("All files upload!", global$lista, type = "info")
@@ -230,7 +232,12 @@ server <- function(input, output, session) {
                    my_vals$cp4 <- csvs(4)$Cp
                  }
                  else if (length(global$lista) == 0) {
-                   shinyalert("Warning!", "Id doesn't exit.Check it.", type = "warning")
+                   shinyalert("Warning!",
+                              paste0(global$file, "  doesn't exit in this folder.Check it."),
+                              type = "warning")
+                 }
+                 else if (length(global$lista) > 4) {
+                   shinyalert("Warning!", "This id has more than 4 files.", type = "warning")
                  }
                })
   
@@ -618,7 +625,6 @@ server <- function(input, output, session) {
     
     merged_df <-
       merged_df[order(factor(merged_df$col1, levels = specific_order)), ]
-    #merged_df$Cp = as.numeric(levels(merged_df$Cp))[merged_df$Cp]
     merged_df
   }
   
@@ -797,656 +803,723 @@ server <- function(input, output, session) {
       mutate(well = paste0(LETTERS[row], col))
   }
   
-  
-  output$plot1 <- renderPlot({
-    # check input data and rise an error message if none
-    #validate(need(csvs(1), "Please, upload a data set with data 1"))
-    ggplot(data = ldf1(1)) +
-      geom_circle(aes(
-        x0 = col,
-        y0 = row,
-        r = 0.5,
-        fill = as.numeric(value)
-      )) +
-      coord_equal() +
-      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
-      scale_y_continuous(
-        breaks = 1:8,
-        labels = LETTERS[1:8],
-        expand = expansion(mult = c(0.01, 0.01)),
-        trans = reverse_trans()
-      ) +
-      scale_fill_gradientn(colours = rainbow(6),na.value = "white",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
-                           limits=c(0,40))+
-      labs(
-        title = "96 Well plate of TRECs",
-        subtitle = "Cp or log10(Conc) values",
-        x = "Col",
-        y = "Row"
-      ) +
-      theme_bw()
-  })
-  
-  
-  output$plot2 <- renderPlot({
-    # check input data and rise an error message if none
-    validate(need(csvs(2), "Please, upload a data set with data 1"))
-    ggplot(data = ldf1(2)) +
-      geom_circle(aes(
-        x0 = col,
-        y0 = row,
-        r = 0.5,
-        fill = as.numeric(value),
-        label = as.numeric(value)
-      )) +
-      coord_equal() +
-      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
-      scale_y_continuous(
-        breaks = 1:8,
-        labels = LETTERS[1:8],
-        expand = expansion(mult = c(0.01, 0.01)),
-        trans = reverse_trans()
-      ) +
-      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
-                           limits=c(0,40))+
-      labs(
-        title = "96 Well plate of TRECs",
-        subtitle = "Cp or log10(Conc) values",
-        x = "Col",
-        y = "Row"
-      ) +
-      theme_bw()
-  })
-  
-  output$plot3 <- renderPlot({
-    # check input data and rise an error message if none
-    validate(need(csvs(3), "Please, upload a data set with data 1"))
-    ggplot(data = ldf1(3)) +
-      geom_circle(aes(
-        x0 = col,
-        y0 = row,
-        r = 0.5,
-        fill = as.numeric(value)
-      )) +
-      coord_equal() +
-      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
-      scale_y_continuous(
-        breaks = 1:8,
-        labels = LETTERS[1:8],
-        expand = expansion(mult = c(0.01, 0.01)),
-        trans = reverse_trans()
-      ) +
-      scale_fill_gradientn(colours = topo.colors(6)
-                           ,na.value = "transparent",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
-                           limits=c(0,40))+
-      labs(
-        title = "96 Well plate of TRECs",
-        subtitle = "Cp or log10(Conc) values",
-        x = "Col",
-        y = "Row"
-      ) +
-      theme_bw()
-  })
-  
-  output$plot4 <- renderPlot({
-    # check input data and rise an error message if none
-    validate(need(csvs(4), "Please, upload a data set with data 1"))
-    ggplot(data = ldf1(4)) +
-      geom_circle(aes(
-        x0 = col,
-        y0 = row,
-        r = 0.5,
-        fill = as.numeric(value)
-      )) +
-      coord_equal() +
-      scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
-      scale_y_continuous(
-        breaks = 1:8,
-        labels = LETTERS[1:8],
-        expand = expansion(mult = c(0.01, 0.01)),
-        trans = reverse_trans()
-      ) +
-      scale_fill_gradientn(colours = topo.colors(6),na.value = "transparent",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
-                           limits=c(0,40)) +
-      labs(
-        title = "96 Well plate of TRECs",
-        subtitle = "Cp or log10(Conc) values",
-        x = "Col",
-        y = "Row"
-      ) +
-      theme_bw()
-  })
-  
-  #Gráfico bigotes
-  
-  plot_bigotes <- reactive({
-    if (length(global$lista) == 4) {
-      output$graph_bigotes <- renderPlotly({
-        fig <- plot_ly(type = 'violin')
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(1)$Cp,
-            
-            legendgroup = 'M',
-            scalegroup = 'M',
-            name = global$lista[1],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col1)
-          )
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(2)$Cp,
-            
-            legendgroup = 'F',
-            scalegroup = 'F',
-            name = global$lista[2],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col2)
-          )
-        
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(3)$Cp,
-            
-            legendgroup = 'G',
-            scalegroup = 'G',
-            name = global$lista[3],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col3)
-          )
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(4)$Cp,
-            
-            legendgroup = 'A',
-            scalegroup = 'A',
-            name = global$lista[4],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col4)
-          )
-        
-        fig <- fig %>%
-          layout(yaxis = list(zeroline = F),
-                 violinmode = 'group')
-        
-      })
+  breaksUpdate <- function(number){
+    if (number == 1) {
+      variable = v2plot()
+    } else if (number == "2") {
+      variable = v3plot()
+    } else if (number == 3) {
+      variable = v4plot()
+    } else if (number == 4) {
+      variable = v4plot_bis()
     }
-    if (length(global$lista) == 3) {
-      output$graph_bigotes <- renderPlotly({
-        fig <- plot_ly(type = 'violin')
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(1)$Cp,
-            
-            legendgroup = 'M',
-            scalegroup = 'M',
-            name = global$lista[1],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col1)
-          )
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(2)$Cp,
-            
-            legendgroup = 'F',
-            scalegroup = 'F',
-            name = global$lista[2],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col2)
-          )
-        
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(3)$Cp,
-            
-            legendgroup = 'G',
-            scalegroup = 'G',
-            name = global$lista[3],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col3)
-          )
-        
-        fig <- fig %>%
-          layout(yaxis = list(zeroline = F),
-                 violinmode = 'group')
-        
-      })
-    } else if (length(global$lista) == 2) {
-      output$graph_bigotes <- renderPlotly({
-        fig <- plot_ly(type = 'violin')
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(1)$Cp,
-            
-            legendgroup = 'M',
-            scalegroup = 'M',
-            name = global$lista[1],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col1)
-          )
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(2)$Cp,
-            
-            legendgroup = 'F',
-            scalegroup = 'F',
-            name = global$lista[2],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col2)
-          )
-        fig <- fig %>%
-          layout(yaxis = list(zeroline = F),
-                 violinmode = 'group')
-        
-      })
-    } else if (length(global$lista) == 1) {
-      output$graph_bigotes <- renderPlotly({
-        fig <- plot_ly(type = 'violin')
-        fig <- fig %>%
-          add_trace(
-            y = ~ csvs(1)$Cp,
-            
-            legendgroup = 'M',
-            scalegroup = 'M',
-            name = global$lista[1],
-            box = list(visible = T),
-            meanline = list(visible = T),
-            color = I(input$col1)
-          )
-        
-        fig <- fig %>%
-          layout(yaxis = list(zeroline = F),
-                 violinmode = 'group')
-        
-      })
+    
+    if (variable == "Cp") {  
+      c(0, 25, 40)}
+    else{
+      c(0,5,10)
     }
-  })
+  }
   
-  #Gráfica boxplot
-  
-  plot_big <- reactive({
-    if (length(global$lista) == 4) {
-      output$graph <- renderPlotly({
-        fig <- plot_ly(type = "box")
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(1)$Cp,
-            jitter = 0.3,
-            pointpos = -1.8,
-            boxpoints = 'all',
-            marker = list(color = input$line1),
-            line = list(color = input$line1),
-            fillcolor = input$col1,
-            name = global$lista[1]
-          )
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(2)$Cp,
-            name = global$lista[2],
-            boxpoints = 'suspectedoutliers',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line2),
-            fillcolor = input$col2,
-          )
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(3)$Cp,
-            name = global$lista[3],
-            boxpoints = 'suspectedoutliers',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line3),
-            fillcolor = input$col3,
-          )
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(4)$Cp,
-            name = global$lista[4],
-            boxpoints = 'suspectedoutliers',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line4),
-            fillcolor = input$col4,
-          )
-        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
-        
-      })
+  labelsUpdate <- function(number){
+    if (number == 1) {
+      variable = v2plot()
+    } else if (number == "2") {
+      variable = v3plot()
+    } else if (number == 3) {
+      variable = v4plot()
+    } else if (number == 4) {
+      variable = v4plot_bis()
     }
-    if (length(global$lista) == 3) {
-      output$graph <- renderPlotly({
-        fig <- plot_ly(type = "box")
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(1)$Cp,
-            jitter = 0.3,
-            pointpos = -1.8,
-            boxpoints = 'all',
-            marker = list(color = input$line1),
-            line = list(color = input$line1),
-            fillcolor = input$col1,
-            name = global$lista[1]
-          )
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(2)$Cp,
-            name = global$lista[2],
-            boxpoints = 'suspectedoutliers',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line2),
-            fillcolor = input$col2,
-          )
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(3)$Cp,
-            name = global$lista[3],
-            boxpoints = 'suspectedoutliers',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line3),
-            fillcolor = input$col3,
-          )
-        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
-        
-      })
-    } else if (length(global$lista) == 2) {
-      output$graph <- renderPlotly({
-        fig <- plot_ly(type = "box")
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(1)$Cp,
-            jitter = 0.3,
-            pointpos = -1.8,
-            boxpoints = 'all',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line1),
-            fillcolor = input$col1,
-            name = global$lista[1]
-          )
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(2)$Cp,
-            name = global$lista[2],
-            boxpoints = 'suspectedoutliers',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line2),
-            fillcolor = input$col2,
-          )
-        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
-        
-      })
-    } else if (length(global$lista) == 1) {
-      output$graph <- renderPlotly({
-        fig <- plot_ly(type = "box")
-        fig <-
-          fig %>% add_boxplot(
-            y = csvs(1)$Cp,
-            jitter = 0.3,
-            pointpos = -1.8,
-            boxpoints = 'all',
-            marker = list(
-              color = 'rgb(8,81,156)',
-              outliercolor = 'rgba(219, 64, 82, 0.6)',
-              line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                          outlierwidth = 2)
-            ),
-            line = list(color = input$line1),
-            fillcolor = input$col1,
-            name = global$lista[1]
-          )
-        fig <- fig %>% layout(title = "Box Plot Styling Outliers")
-        
-      })
+    
+    if (variable == "Cp") {  
+      c("Minimum", 25, "Maximum")}
+    else{
+      c("Minimum", 5, "Maximum")
     }
-  })
+  }
   
-  ### TABLA Y GRAFICO DE TODOS LOS ARCHIVOS ###
-  #Elegir el directorio donde queremos buscar
-  shinyDirChoose(
-    input,
-    'dir2',
-    roots = c(home = '~'),
-    filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw")
-  )
+  limitsUpdate <- function(number){
+    if (number == 1) {
+      variable = v2plot()
+    } else if (number == "2") {
+      variable = v3plot()
+    } else if (number == 3) {
+      variable = v4plot()
+    } else if (number == 4) {
+      variable = v4plot_bis()
+    }
+    
+    if (variable == "Cp") {  
+      c(0, 40)}
+    else{
+      c(0, 10)
+    }
+  }
   
-  global2 <- reactiveValues(datapath = getwd())
   
-  dir2 <- reactive(input$dir2)
   
-  type_file <- reactive({
-    input$type_file
-  })
-  
-  observeEvent(ignoreNULL = TRUE,
-               eventExpr = {
-                 input$dir2
-               },
-               handlerExpr = {
-                 if (!"path" %in% names(dir2()))
-                   return()
-                 home <- normalizePath("~")
-                 global2$datapath <-
-                   file.path(home, paste(unlist(dir2()$path[-1]), collapse = .Platform$file.sep))
-               })
-  
-  render_big_plot <- reactive({
-    mypath = global2$datapath
-    setwd(mypath)
-    global2$lista <- list.files(
-      global2$datapath,
-      pattern = paste0("*", type_file(), "*"),
-      recursive = TRUE
-    )
-    files = read.csv2(
-      global2$lista[1],
-      sep = '\t',
-      dec = ',',
-      header = TRUE,
-      skip = 1
-    )
-    files <- cbind(files, file = rep(global2$lista[1]), nrow(files))
-    contador <- 2
-    for (txt_file in global2$lista[2:length(global2$lista)]) {
-      tmp <-
-        read.csv2(
-          txt_file,
-          sep = '\t',
-          dec = ',',
-          header = TRUE,
-          skip = 1
+  output$plot1 <- 
+    renderPlot({
+      # check input data and rise an error message if none
+      #validate(need(csvs(1), "Please, upload a data set with data 1"))
+      ggplot(data = ldf1(1)) +
+        geom_circle(aes(
+          x0 = col,
+          y0 = row,
+          r = 0.5,
+          fill = as.numeric(value)
+        )) +
+        coord_equal() +
+        scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+        scale_y_continuous(
+          breaks = 1:8,
+          labels = LETTERS[1:8],
+          expand = expansion(mult = c(0.01, 0.01)),
+          trans = reverse_trans()
+        ) +
+        scale_fill_gradientn(
+          colours = rainbow(6),
+          na.value = "white",
+          breaks = breaksUpdate(1),
+          labels = labelsUpdate(1),
+          limits = limitsUpdate(1)
+        ) +
+        labs(
+          title = "96 Well plate of TRECs",
+          subtitle = "Cp or log10(Conc) values",
+          x = "Col",
+          y = "Row"
+        ) +
+        theme_bw()
+    })
+
+
+output$plot2 <- renderPlot({
+  # check input data and rise an error message if none
+  validate(need(csvs(2), "Please, upload a data set with data 1"))
+  ggplot(data = ldf1(2)) +
+    geom_circle(aes(
+      x0 = col,
+      y0 = row,
+      r = 0.5,
+      fill = as.numeric(value)
+    )) +
+    coord_equal() +
+    scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+    scale_y_continuous(
+      breaks = 1:8,
+      labels = LETTERS[1:8],
+      expand = expansion(mult = c(0.01, 0.01)),
+      trans = reverse_trans()
+    ) +
+    scale_fill_gradientn(
+      colours = rainbow(6),
+      na.value = "transparent",
+      breaks = breaksUpdate(2),
+      labels = labelsUpdate(2),
+      limits = limitsUpdate(2)
+    ) +
+    labs(
+      title = "96 Well plate of TRECs",
+      subtitle = "Cp or log10(Conc) values",
+      x = "Col",
+      y = "Row"
+    ) +
+    theme_bw()
+})
+
+output$plot3 <- renderPlot({
+  # check input data and rise an error message if none
+  validate(need(csvs(3), "Please, upload a data set with data 1"))
+  ggplot(data = ldf1(3)) +
+    geom_circle(aes(
+      x0 = col,
+      y0 = row,
+      r = 0.5,
+      fill = as.numeric(value)
+    )) +
+    coord_equal() +
+    scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+    scale_y_continuous(
+      breaks = 1:8,
+      labels = LETTERS[1:8],
+      expand = expansion(mult = c(0.01, 0.01)),
+      trans = reverse_trans()
+    ) +
+    scale_fill_gradientn(
+      colours = topo.colors(6)
+      ,
+      na.value = "transparent",
+      breaks = breaksUpdate(3),
+      labels = labelsUpdate(3),
+      limits = limitsUpdate(3)
+    ) +
+    labs(
+      title = "96 Well plate of TRECs",
+      subtitle = "Cp or log10(Conc) values",
+      x = "Col",
+      y = "Row"
+    ) +
+    theme_bw()
+})
+
+output$plot4 <- renderPlot({
+  # check input data and rise an error message if none
+  validate(need(csvs(4), "Please, upload a data set with data 1"))
+  ggplot(data = ldf1(4)) +
+    geom_circle(aes(
+      x0 = col,
+      y0 = row,
+      r = 0.5,
+      fill = as.numeric(value)
+    )) +
+    coord_equal() +
+    scale_x_continuous(breaks = 1:12, expand = expansion(mult = c(0.01, 0.01))) +
+    scale_y_continuous(
+      breaks = 1:8,
+      labels = LETTERS[1:8],
+      expand = expansion(mult = c(0.01, 0.01)),
+      trans = reverse_trans()
+    ) +
+    scale_fill_gradientn(
+      colours = topo.colors(6),
+      na.value = "transparent",
+      breaks = breaksUpdate(4),
+      labels = labelsUpdate(4),
+      limits = limitsUpdate(4)
+    ) +
+    labs(
+      title = "96 Well plate of TRECs",
+      subtitle = "Cp or log10(Conc) values",
+      x = "Col",
+      y = "Row"
+    ) +
+    theme_bw()
+})
+
+#Gráfico bigotes
+
+plot_bigotes <- reactive({
+  if (length(global$lista) == 4) {
+    output$graph_bigotes <- renderPlotly({
+      fig <- plot_ly(type = 'violin')
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(1)$Cp,
+          
+          legendgroup = 'M',
+          scalegroup = 'M',
+          name = global$lista[1],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col1)
         )
-      tmp <-
-        cbind(tmp, file = rep(global2$lista[contador]), nrow(tmp))
-      common <- intersect(colnames(files), colnames(tmp))
-      files <- rbind(files[common], tmp[common])
-      files["Name"] <- NULL
-      contador <- contador + 1
-    }
-    files
-  })
-  
-  table_summary <- reactive({
-    data <- render_big_plot()
-    data$Cp <- as.numeric(as.character(data$Cp))
-    data_summary <- data.frame(unclass(summary(data$Cp)))
-    data_summary$names <-
-      c("Min", "1st Qu", "Median", "Mean", "3rd Qu", "Max", "NA's")
-    colnames(data_summary) <- c("value", "statistic")
-    my_data2 <- data_summary[, c(2, 1)]
-    my_data2
-  })
-  
-  observeEvent(ignoreNULL = TRUE,
-               eventExpr = {
-                 input$display
-               },
-               handlerExpr = {
-                 output$plot_big <- renderDT({
-                   datatable(
-                     render_big_plot(),
-                     options = list(
-                       pageLength = 10,
-                       columnDefs = list(list(
-                         className = 'dt-center', targets = 5
-                       )),
-                       lengthMenu = c(5, 10, 15, 20),
-                       initComplete = JS(
-                         "function(settings, json) {",
-                         "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
-                         "}"
-                       )
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(2)$Cp,
+          
+          legendgroup = 'F',
+          scalegroup = 'F',
+          name = global$lista[2],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col2)
+        )
+      
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(3)$Cp,
+          
+          legendgroup = 'G',
+          scalegroup = 'G',
+          name = global$lista[3],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col3)
+        )
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(4)$Cp,
+          
+          legendgroup = 'A',
+          scalegroup = 'A',
+          name = global$lista[4],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col4)
+        )
+      
+      fig <- fig %>%
+        layout(yaxis = list(zeroline = F),
+               violinmode = 'group')
+      
+    })
+  }
+  if (length(global$lista) == 3) {
+    output$graph_bigotes <- renderPlotly({
+      fig <- plot_ly(type = 'violin')
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(1)$Cp,
+          
+          legendgroup = 'M',
+          scalegroup = 'M',
+          name = global$lista[1],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col1)
+        )
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(2)$Cp,
+          
+          legendgroup = 'F',
+          scalegroup = 'F',
+          name = global$lista[2],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col2)
+        )
+      
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(3)$Cp,
+          
+          legendgroup = 'G',
+          scalegroup = 'G',
+          name = global$lista[3],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col3)
+        )
+      
+      fig <- fig %>%
+        layout(yaxis = list(zeroline = F),
+               violinmode = 'group')
+      
+    })
+  } else if (length(global$lista) == 2) {
+    output$graph_bigotes <- renderPlotly({
+      fig <- plot_ly(type = 'violin')
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(1)$Cp,
+          
+          legendgroup = 'M',
+          scalegroup = 'M',
+          name = global$lista[1],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col1)
+        )
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(2)$Cp,
+          
+          legendgroup = 'F',
+          scalegroup = 'F',
+          name = global$lista[2],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col2)
+        )
+      fig <- fig %>%
+        layout(yaxis = list(zeroline = F),
+               violinmode = 'group')
+      
+    })
+  } else if (length(global$lista) == 1) {
+    output$graph_bigotes <- renderPlotly({
+      fig <- plot_ly(type = 'violin')
+      fig <- fig %>%
+        add_trace(
+          y = ~ csvs(1)$Cp,
+          
+          legendgroup = 'M',
+          scalegroup = 'M',
+          name = global$lista[1],
+          box = list(visible = T),
+          meanline = list(visible = T),
+          color = I(input$col1)
+        )
+      
+      fig <- fig %>%
+        layout(yaxis = list(zeroline = F),
+               violinmode = 'group')
+      
+    })
+  }
+})
+
+#Gráfica boxplot
+
+plot_big <- reactive({
+  if (length(global$lista) == 4) {
+    output$graph <- renderPlotly({
+      fig <- plot_ly(type = "box")
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(1)$Cp,
+          jitter = 0.3,
+          pointpos = -1.8,
+          boxpoints = 'all',
+          marker = list(color = input$line1),
+          line = list(color = input$line1),
+          fillcolor = input$col1,
+          name = global$lista[1]
+        )
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(2)$Cp,
+          name = global$lista[2],
+          boxpoints = 'suspectedoutliers',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line2),
+          fillcolor = input$col2,
+        )
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(3)$Cp,
+          name = global$lista[3],
+          boxpoints = 'suspectedoutliers',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line3),
+          fillcolor = input$col3,
+        )
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(4)$Cp,
+          name = global$lista[4],
+          boxpoints = 'suspectedoutliers',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line4),
+          fillcolor = input$col4,
+        )
+      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      
+    })
+  }
+  if (length(global$lista) == 3) {
+    output$graph <- renderPlotly({
+      fig <- plot_ly(type = "box")
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(1)$Cp,
+          jitter = 0.3,
+          pointpos = -1.8,
+          boxpoints = 'all',
+          marker = list(color = input$line1),
+          line = list(color = input$line1),
+          fillcolor = input$col1,
+          name = global$lista[1]
+        )
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(2)$Cp,
+          name = global$lista[2],
+          boxpoints = 'suspectedoutliers',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line2),
+          fillcolor = input$col2,
+        )
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(3)$Cp,
+          name = global$lista[3],
+          boxpoints = 'suspectedoutliers',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line3),
+          fillcolor = input$col3,
+        )
+      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      
+    })
+  } else if (length(global$lista) == 2) {
+    output$graph <- renderPlotly({
+      fig <- plot_ly(type = "box")
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(1)$Cp,
+          jitter = 0.3,
+          pointpos = -1.8,
+          boxpoints = 'all',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line1),
+          fillcolor = input$col1,
+          name = global$lista[1]
+        )
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(2)$Cp,
+          name = global$lista[2],
+          boxpoints = 'suspectedoutliers',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line2),
+          fillcolor = input$col2,
+        )
+      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      
+    })
+  } else if (length(global$lista) == 1) {
+    output$graph <- renderPlotly({
+      fig <- plot_ly(type = "box")
+      fig <-
+        fig %>% add_boxplot(
+          y = csvs(1)$Cp,
+          jitter = 0.3,
+          pointpos = -1.8,
+          boxpoints = 'all',
+          marker = list(
+            color = 'rgb(8,81,156)',
+            outliercolor = 'rgba(219, 64, 82, 0.6)',
+            line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                        outlierwidth = 2)
+          ),
+          line = list(color = input$line1),
+          fillcolor = input$col1,
+          name = global$lista[1]
+        )
+      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      
+    })
+  }
+})
+
+### TABLA Y GRAFICO DE TODOS LOS ARCHIVOS ###
+#Elegir el directorio donde queremos buscar
+shinyDirChoose(
+  input,
+  'dir2',
+  roots = c(home = '~'),
+  filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw")
+)
+
+global2 <- reactiveValues(datapath = getwd())
+
+dir2 <- reactive(input$dir2)
+
+type_file <- reactive({
+  input$type_file
+})
+
+observeEvent(ignoreNULL = TRUE,
+             eventExpr = {
+               input$dir2
+             },
+             handlerExpr = {
+               if (!"path" %in% names(dir2()))
+                 return()
+               home <- normalizePath("~")
+               global2$datapath <-
+                 file.path(home, paste(unlist(dir2()$path[-1]), collapse = .Platform$file.sep))
+             })
+
+render_big_plot <- reactive({
+  mypath = global2$datapath
+  setwd(mypath)
+  global2$lista <- list.files(global2$datapath,
+                              pattern = paste0("*", type_file(), "*"),
+                              recursive = TRUE)
+  files = read.csv2(
+    global2$lista[1],
+    sep = '\t',
+    dec = ',',
+    header = TRUE,
+    skip = 1
+  )
+  files <- cbind(files, file = rep(global2$lista[1]), nrow(files))
+  contador <- 2
+  for (txt_file in global2$lista[2:length(global2$lista)]) {
+    tmp <-
+      read.csv2(
+        txt_file,
+        sep = '\t',
+        dec = ',',
+        header = TRUE,
+        skip = 1
+      )
+    tmp <-
+      cbind(tmp, file = rep(global2$lista[contador]), nrow(tmp))
+    common <- intersect(colnames(files), colnames(tmp))
+    files <- rbind(files[common], tmp[common])
+    files["Name"] <- NULL
+    contador <- contador + 1
+  }
+  files
+})
+
+table_summary <- reactive({
+  data <- render_big_plot()
+  data$Cp <- as.numeric(as.character(data$Cp))
+  data_summary <- data.frame(unclass(summary(data$Cp)))
+  data_summary$names <-
+    c("Min", "1st Qu", "Median", "Mean", "3rd Qu", "Max", "NA's")
+  colnames(data_summary) <- c("value", "statistic")
+  my_data2 <- data_summary[, c(2, 1)]
+  my_data2
+})
+
+observeEvent(ignoreNULL = TRUE,
+             eventExpr = {
+               input$display
+             },
+             handlerExpr = {
+               output$plot_big <- renderDT({
+                 datatable(
+                   render_big_plot(),
+                   options = list(
+                     pageLength = 10,
+                     columnDefs = list(list(
+                       className = 'dt-center', targets = 5
+                     )),
+                     lengthMenu = c(5, 10, 15, 20),
+                     initComplete = JS(
+                       "function(settings, json) {",
+                       "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+                       "}"
                      )
                    )
-                 })
-                 output$graph2 <- renderPlotly({
-                   fig <- plot_ly(type = "box")
-                   fig <-
-                     fig %>% add_boxplot(
-                       y = render_big_plot()$Cp,
-                       name = "Suspected Outlier",
-                       boxpoints = 'suspectedoutliers',
-                       marker = list(
-                         color = 'rgb(8,81,156)',
-                         outliercolor = 'rgba(219, 64, 82, 0.6)',
-                         line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
-                                     outlierwidth = 2)
-                       ),
-                       line = list(color = 'rgb(8,81,156)'),
-                       fillcolor = input$colSummary
-                     )
-                   fig <- fig %>% layout(title = type_file())
-                 })
-                 output$number_txt <- renderText({
-                   global2$lista
-                 })
-                 output$summary <- renderTable({
-                   table_summary()
-                 })
+                 )
                })
-  
-  
-  output$report_gen <- downloadHandler(
-    filename = "sample_report.pdf",
-    content = function(file) {
-      my_vals$file1 <- input$file1_input
-      my_vals$file2 <- input$file2_input
-      my_vals$file3 <- input$file3_input
-      my_vals$file4 <- input$file4_input
-      #Values to plot 96-well
-      my_vals$plot1 <- input$plot1_input
-      my_vals$plot2 <- input$plot2_input
-      my_vals$plot3 <- input$plot3_input
-      my_vals$plot4 <- input$plot4_input
-      #Get comments
-      my_vals$comment <- input$comment
-      my_vals$autor <- input$autor
-      my_vals$title <- input$title_doc
-      
-      my_vals$comment_data1 <- input$comment_data1
-      my_vals$comment_data2 <- input$comment_data2
-      my_vals$comment_data3 <- input$comment_data3
-      my_vals$comment_data4 <- input$comment_data4
-      
-      my_vals$comment_plot1 <- input$comment_plot1
-      # copy markdown report file to a temporary directory before knitting it with the
-      # selected dataset. This is useful if we don't have write permissions for the current
-      # working directory
-      temp_report <-
-        file.path("template.Rmd")
-      message("\n... temp_report path: ", temp_report, "\n")
-      
-      # copy the report template into the temp directory
-      file.copy(
-        here::here("shiny_report_gen", "report_template.Rmd"),
-        temp_report,
-        overwrite = TRUE
-      )
-      
-      # create a named list of parameters to pass to to Rmd template.
-      # can also pass reactiveValues or reactive objects
-      pass_params <- list(imported = my_vals)
-      
-      # knit the document, passing in the `pass_params` list, and evaluate it in a
-      # child of the global environment (this isolates the code in the document
-      # from the code in the app).
-      rmarkdown::render(
-        temp_report,
-        output_file = file,
-        params = pass_params,
-        envir = new.env(parent = globalenv())
-      )
-      
-    }
-  )
-  
-  observeEvent(input$reset11, {
-    output$number_txt <- NULL
-    output$plot_big <- NULL
-    output$graph2 <- NULL
-    output$summary <- NULL
-  })
-  
-  observeEvent(input$reset, {
-    output$contents <- NULL
-    output$contents2 <- NULL
-    output$contents3 <- NULL
-    output$title1 <- NULL
-    output$title2 <- NULL
-    output$title3 <- NULL
-    output$title4 <- NULL
-    output$title5 <- NULL
-    output$title6 <- NULL
-    output$plot1 <- NULL
-    output$plot2 <- NULL
-    output$plot3 <- NULL
-    output$graph <- NULL
-    output$graph2 <- NULL
-  })
-  
-  
-  
+               output$graph2 <- renderPlotly({
+                 fig <- plot_ly(type = "box")
+                 fig <-
+                   fig %>% add_boxplot(
+                     y = render_big_plot()$Cp,
+                     name = "Suspected Outlier",
+                     boxpoints = 'suspectedoutliers',
+                     marker = list(
+                       color = 'rgb(8,81,156)',
+                       outliercolor = 'rgba(219, 64, 82, 0.6)',
+                       line = list(outliercolor = 'rgba(219, 64, 82, 1.0)',
+                                   outlierwidth = 2)
+                     ),
+                     line = list(color = 'rgb(8,81,156)'),
+                     fillcolor = input$colSummary
+                   )
+                 fig <- fig %>% layout(title = type_file())
+               })
+               output$number_txt <- renderText({
+                 global2$lista
+               })
+               output$summary <- renderTable({
+                 table_summary()
+               })
+             })
+
+
+output$report_gen <- downloadHandler(
+  filename = "sample_report.pdf",
+  content = function(file) {
+    my_vals$file1 <- input$file1_input
+    my_vals$file2 <- input$file2_input
+    my_vals$file3 <- input$file3_input
+    my_vals$file4 <- input$file4_input
+    #Values to plot 96-well
+    my_vals$plot1 <- input$plot1_input
+    my_vals$plot2 <- input$plot2_input
+    my_vals$plot3 <- input$plot3_input
+    my_vals$plot4 <- input$plot4_input
+    #Get comments
+    my_vals$comment <- input$comment
+    my_vals$autor <- input$autor
+    my_vals$title <- input$title_doc
+    
+    my_vals$comment_data1 <- input$comment_data1
+    my_vals$comment_data2 <- input$comment_data2
+    my_vals$comment_data3 <- input$comment_data3
+    my_vals$comment_data4 <- input$comment_data4
+    
+    my_vals$comment_plot1 <- input$comment_plot1
+    # copy markdown report file to a temporary directory before knitting it with the
+    # selected dataset. This is useful if we don't have write permissions for the current
+    # working directory
+    temp_report <-
+      file.path("template.Rmd")
+    message("\n... temp_report path: ", temp_report, "\n")
+    
+    # copy the report template into the temp directory
+    file.copy(here::here("shiny_report_gen", "report_template.Rmd"),
+              temp_report,
+              overwrite = TRUE)
+    
+    # create a named list of parameters to pass to to Rmd template.
+    # can also pass reactiveValues or reactive objects
+    pass_params <- list(imported = my_vals)
+    
+    # knit the document, passing in the `pass_params` list, and evaluate it in a
+    # child of the global environment (this isolates the code in the document
+    # from the code in the app).
+    rmarkdown::render(
+      temp_report,
+      output_file = file,
+      params = pass_params,
+      envir = new.env(parent = globalenv())
+    )
+    
+  }
+)
+
+observeEvent(input$reset11, {
+  output$number_txt <- NULL
+  output$plot_big <- NULL
+  output$graph2 <- NULL
+  output$summary <- NULL
+})
+
+observeEvent(input$reset, {
+  output$contents <- NULL
+  output$contents2 <- NULL
+  output$contents3 <- NULL
+  output$title1 <- NULL
+  output$title2 <- NULL
+  output$title3 <- NULL
+  output$title4 <- NULL
+  output$title5 <- NULL
+  output$title6 <- NULL
+  output$plot1 <- NULL
+  output$plot2 <- NULL
+  output$plot3 <- NULL
+  output$graph <- NULL
+  output$graph2 <- NULL
+})
+
+
+
 }
