@@ -15,20 +15,19 @@ library(plotly)
 
 # ----------------------------------
 # ui.R
-# Descripción: Archivo con todos los elementos de la interfaz gráfica
+# Description: File with all elements for UI
 # ----------------------------------
 
 # ----------------------------------
 # dashboardPage
-# Descripción: establece el formato de toda la página diviendo luego por Header, body
+# Descrption: it is the main function of all application
 # ----------------------------------
 
 my_height = "100px"
 
 ui <- dashboardPage(
   skin = "yellow",
-  dashboardHeader(
-    title = tags$img(
+  dashboardHeader(title = tags$img(
     src = "roche_logo.svg",
     height = 40,
     width = 90
@@ -371,10 +370,9 @@ ui <- dashboardPage(
                          choices = c("Cp" = "Cp", "Concentration" = "Conc")
                        ),
                      ),
-                     #End column inputs
+                     
                      column(width = 8,
-                            #img(src = "images/96-well plot 1.png", width = "99%"),
-                            #img(src = "images/96-well plot 2.png", width = "99%")
+                            
                             plotOutput("plot1"))
                    ))),
           tabPanel(title = textOutput("title5"),
@@ -391,7 +389,7 @@ ui <- dashboardPage(
                      column(width = 8,
                             #img(src = "images/96-well plot 1.png", width = "99%"),
                             #img(src = "images/96-well plot 2.png", width = "99%")
-                            plotOutput("plot2"),)
+                            plotOutput("plot2"), )
                    ))),
           tabPanel(title = textOutput("title6"),
                    fluidPage(fluidRow(
@@ -403,11 +401,8 @@ ui <- dashboardPage(
                          choices = c("Cp" = "Cp", "Concentration" = "Conc")
                        ),
                      ),
-                     #End column inputs
                      column(width = 8,
-                            #img(src = "images/96-well plot 1.png", width = "99%"),
-                            #img(src = "images/96-well plot 2.png", width = "99%")
-                            plotOutput("plot3"),)
+                            plotOutput("plot3"), )
                    ))),
           tabPanel(title = textOutput("title6_bis"),
                    fluidPage(fluidRow(
@@ -423,7 +418,7 @@ ui <- dashboardPage(
                      column(width = 8,
                             #img(src = "images/96-well plot 1.png", width = "99%"),
                             #img(src = "images/96-well plot 2.png", width = "99%")
-                            plotOutput("plot4"),)
+                            plotOutput("plot4"), )
                    ))),
         )
       ),

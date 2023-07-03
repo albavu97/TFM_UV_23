@@ -7,15 +7,14 @@ library(ggplate)
 
 # ----------------------------------
 # app.R
-# Server: Aquí está el controlador de los inputs y outputs de ui.R
+# Server: Input controller and outputs of ui.R
 # ----------------------------------
 
 
 server <- function(input, output, session) {
-  # inicializamos reactiveValues que contendrán los datos/objetos
-  # que se pasaran al R markdown document
+  # reactiveValues of R markdown document
   my_vals <- reactiveValues()
-  # Este objeto contendrá los datos asociados a los archivos
+  # variable of directories
   global <- reactiveValues(datapath = getwd())
   dir <- reactive(input$dir)
   
@@ -23,7 +22,7 @@ server <- function(input, output, session) {
     menuItem("Menu item", icon = icon("calendar"))
   })
   
-  #Elegir el directorio donde queremos buscar
+  #Choose directory to find
   shinyDirChoose(
     input,
     'dir',
@@ -31,7 +30,7 @@ server <- function(input, output, session) {
     filetypes = c('', 'txt', 'bigWig', "tsv", "csv", "bw")
   )
   
-  # Controla cuando se mete el id del archivo
+  # check when the input file is typed
   observeEvent(input$fileId, {
     fileId <- reactive(toString(input$fileId))
     output$idOut <- renderText({
@@ -40,7 +39,7 @@ server <- function(input, output, session) {
     global$file <- fileId()
   })
   
-  # Primera tabla de los archivos
+  # table of file 1
   render1 <- reactive({
     output$contents <- renderDT({
       datatable(
@@ -61,7 +60,7 @@ server <- function(input, output, session) {
     })
   })
   
-  # Segunda tabla de archivos
+  # table of file 2
   render2 <- reactive({
     output$contents2 <- renderDT({
       datatable(
@@ -82,7 +81,7 @@ server <- function(input, output, session) {
     })
   })
   
-  # Tercera tabla de archivos
+  # table of file 3
   render3 <- reactive({
     output$contents3 <- renderDT({
       datatable(
@@ -103,7 +102,7 @@ server <- function(input, output, session) {
     })
   })
   
-  # Cuarta tabla de archivos
+  # Table of file 4
   render4 <- reactive({
     output$contents3_bis <- renderDT({
       datatable(
@@ -199,7 +198,7 @@ server <- function(input, output, session) {
                    my_vals$boxplot2 <- ldf1(2)
                    my_vals$dat_table3 <- csvs(3)
                    my_vals$boxplot3 <- ldf1(3)
-                   #Boxplot de los 3 archivos
+                   #Boxplot of 3 files
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
                    my_vals$cp3 <- csvs(3)$Cp
@@ -225,7 +224,7 @@ server <- function(input, output, session) {
                    my_vals$boxplot3 <- ldf1(3)
                    my_vals$dat_table4 <- csvs(4)
                    my_vals$boxplot4 <- ldf1(4)
-                   #Boxplot de los 3 archivos
+                   #Boxplot of 3 files
                    my_vals$cp1 <- csvs(1)$Cp
                    my_vals$cp2 <- csvs(2)$Cp
                    my_vals$cp3 <- csvs(3)$Cp
@@ -250,7 +249,7 @@ server <- function(input, output, session) {
         header = TRUE,
         skip = 1
       )
-    #Quitamos la columna Name para que no haya problemas
+    #Remove name column for security
     tmp2 <- tmp[, !(names(tmp) %in% "Name")]
     tmp2[, c(4, 5)] <- apply(tmp2[, c(4, 5)], 2, function(x) {
       gsub(",", ".", x)
@@ -998,7 +997,7 @@ output$plot4 <- renderPlot({
     theme_bw()
 })
 
-#Gráfico bigotes
+#Box plot
 
 plot_bigotes <- reactive({
   if (length(global$lista) == 4) {
@@ -1211,7 +1210,7 @@ plot_big <- reactive({
           line = list(color = input$line4),
           fillcolor = input$col4,
         )
-      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      fig <- fig %>% layout()
       
     })
   }
@@ -1257,7 +1256,7 @@ plot_big <- reactive({
           line = list(color = input$line3),
           fillcolor = input$col3,
         )
-      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      fig <- fig %>% layout()
       
     })
   } else if (length(global$lista) == 2) {
@@ -1293,7 +1292,7 @@ plot_big <- reactive({
           line = list(color = input$line2),
           fillcolor = input$col2,
         )
-      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      fig <- fig %>% layout()
       
     })
   } else if (length(global$lista) == 1) {
@@ -1315,14 +1314,14 @@ plot_big <- reactive({
           fillcolor = input$col1,
           name = global$lista[1]
         )
-      fig <- fig %>% layout(title = "Box Plot Styling Outliers")
+      fig <- fig %>% layout()
       
     })
   }
 })
 
-### TABLA Y GRAFICO DE TODOS LOS ARCHIVOS ###
-#Elegir el directorio donde queremos buscar
+### Table and plot of all files ###
+#Choose directory to search
 shinyDirChoose(
   input,
   'dir2',
@@ -1479,8 +1478,7 @@ output$report_gen <- downloadHandler(
               temp_report,
               overwrite = TRUE)
     
-    # create a named list of parameters to pass to to Rmd template.
-    # can also pass reactiveValues or reactive objects
+    # create a named reactive values to pass to to Rmd template.
     pass_params <- list(imported = my_vals)
     
     # knit the document, passing in the `pass_params` list, and evaluate it in a
