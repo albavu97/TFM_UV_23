@@ -1,6 +1,8 @@
 ---
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
-output: pdf_document
+output: 
+  pdf_document:
+    toc: true
 header-includes:
   \usepackage{fancyhdr}
   \usepackage{graphicx}
@@ -226,6 +228,8 @@ cat("\n")
 cat(params$imported$comment_data4)
 ```
 
+# Representación Well plot archivos
+
 ``` {r boxplot, echo=FALSE, eval= show_plot, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
 cat("## 96-Well plot primer archivo ")
 cat(params$imported$lista[1])
@@ -347,8 +351,10 @@ ggplot(data = params$imported$boxplot4) +
       theme_bw()
 ```
 
+# Representación diagrama de cajas y bigotes y violin
+
 ``` {r boxplot_long, echo=FALSE,eval=show_plot_unique, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
-cat("## Box plot 3 archivos")
+cat("## Diagrama de cajas 1 archivos")
 
 var1 <- params$imported$lista[1]
 
@@ -367,12 +373,16 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
+cat("## Diagrama de violin 1 archivos")
+
 p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 
 ```
 
 ``` {r boxplot_long2, echo=FALSE,eval=show_plot_unique2, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
+cat("## Diagrama de cajas 2 archivos")
+
 var1 <- params$imported$lista[1]
 var2 <- params$imported$lista[2]
 
@@ -391,11 +401,15 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
+cat("## Diagrama de violin 2 archivos")
+
 p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 ```
 
-``` {r boxplot_long3, echo=FALSE,eval=show_plot_unique3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
+``` {r boxplot_long3, echo=FALSE,eval=show_plot_unique3, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}    
+
+cat("## Diagrama de cajas 3 archivos")
 var1 <- params$imported$lista[1]
 var2 <- params$imported$lista[2]
 var3 <- params$imported$lista[3]
@@ -417,12 +431,15 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
+cat("## Diagrama de violin 3 archivos")
+
 p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 
 ```
 
-``` {r boxplot_long4, echo=FALSE,eval=show_plot_unique4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}        
+``` {r boxplot_long4, echo=FALSE,eval=show_plot_unique4, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}     
+cat("## Diagrama de cajas 4 archivos")
 var1 <- params$imported$lista[1]
 var2 <- params$imported$lista[2]
 var3 <- params$imported$lista[3]
@@ -447,6 +464,8 @@ boxplot(data3,
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
+cat("## Diagrama de violin 4 archivos")
+
 p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
 
@@ -460,7 +479,7 @@ cat(params$imported$comment_plot1)
 ```
 
 ``` {r comment1, echo=FALSE,eval=show_comment, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}  
-cat("## Comentarios finales:")
+cat("# Comentarios finales:")
 cat("\n")
 
 cat(params$imported$comment)
