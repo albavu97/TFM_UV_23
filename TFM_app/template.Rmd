@@ -46,12 +46,12 @@ if(var2 == "FALSE"| length(params$imported$lista)<2){
 }else{
   show_text2 <- TRUE
 }
-if(var3 == "FALSE"){
+if(var3 == "FALSE"| length(params$imported$lista)<3){
   show_text3 <- FALSE
 }else{
   show_text3 <- TRUE
 }
-if(params$imported$file4 == "FALSE"){
+if(params$imported$file4 == "FALSE"| length(params$imported$lista)<4){
   show_text4 <- FALSE
 }else{
   show_text4 <- TRUE
@@ -66,18 +66,18 @@ if(plot1 == "FALSE"){
 }else{
   show_plot <- TRUE
 }
-if(plot2 == "FALSE"){
+if(plot2 == "FALSE"| length(params$imported$lista)<2){
   show_plot2 <- FALSE
 }else{
   show_plot2 <- TRUE
 }
-if(plot3 == "FALSE"){
+if(plot3 == "FALSE"| length(params$imported$lista)<3){
   show_plot3 <- FALSE
 }else{
   show_plot3 <- TRUE
 }
 
-if(plot4 == "FALSE"){
+if(plot4 == "FALSE" | length(params$imported$lista)<4){
   show_plot4 <- FALSE
 }else{
   show_plot4 <- TRUE
@@ -89,7 +89,7 @@ if(length(params$imported$lista)>1){
 }else{
   show_plot_unique <- TRUE
 }
-if(plot2 == "FALSE" | length(params$imported$lista)<2 | length(params$imported$lista)>3){
+if(plot2 == "FALSE" | length(params$imported$lista)<2 | length(params$imported$lista)>2){
   show_plot_unique2 <- FALSE
 }else{
   show_plot_unique2 <- TRUE
@@ -354,7 +354,7 @@ ggplot(data = params$imported$boxplot4) +
 # Representación diagrama de cajas y bigotes y violin
 
 ``` {r boxplot_long, echo=FALSE,eval=show_plot_unique, message=FALSE, warning=FALSE, paged.print=FALSE,results='asis',fig.align = 'center'}
-cat("## Diagrama de cajas 1 archivos")
+cat("## Diagrama de cajas 1 archivo")
 
 var1 <- params$imported$lista[1]
 
@@ -366,14 +366,13 @@ data3 <- data.frame(A=cp1)
 colnames(data3) <- c(var1)
 
 boxplot(data3,
-        main="Box Plot of Cp of different files",
         xlab="files",
         ylab="Cp",
         col=c("blue","orange","green"))
 
 df.m <- reshape2::melt(data3, id.vars = NULL)
 
-cat("## Diagrama de violin 1 archivos")
+cat("## Diagrama de violin 1 archivo")
 
 p <- ggplot(df.m,aes(x = variable, y = value,fill=value,color=variable))
 p + geom_violin()
@@ -394,7 +393,6 @@ data3 <- data.frame(A=cp1,
 colnames(data3) <- c(var1,var2)
 
 boxplot(data3,
-        main="Box Plot of Cp of different files",
         xlab="files",
         ylab="Cp",
         col=c("blue","orange","green"))
@@ -424,7 +422,6 @@ data3 <- data.frame(A=cp1,
 colnames(data3) <- c(var1,var2,var3)
 
 boxplot(data3,
-        main="Box Plot of Cp of different files",
         xlab="files",
         ylab="Cp",
         col=c("blue","orange","green"))
@@ -457,7 +454,6 @@ data3 <- data.frame(A=cp1,
 colnames(data3) <- c(var1,var2,var3,var4)
 
 boxplot(data3,
-        main="Box Plot of Cp of different files",
         xlab="files",
         ylab="Cp",
         col=c("blue","orange","green","grey"))
