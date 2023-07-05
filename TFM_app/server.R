@@ -290,14 +290,6 @@ server <- function(input, output, session) {
   
   #function to update filters of table
   update_function1 <- function(number) {
-    #Update select input
-    updateSelectInput(
-      session,
-      inputId = paste0('colorInput', number),
-      label = 'Select the color',
-      choices  = c("", csvs(number)$Color),
-      selected = NULL
-    )
     updateSelectizeInput(
       session,
       inputId = paste0('PosSelect', number),
@@ -323,9 +315,9 @@ server <- function(input, output, session) {
   
   datafile1 <- reactive({
     filtered <- csvs(1)
-    if (input$colorInput1 != "") {
-      filtered <- subset(csvs(1), Color %in% input$colorInput1)
-    }
+    if (input$concInput1 != 10 & sum(!is.na(csvs(1)$Concentration)>0)) {
+       filtered <- subset(csvs(1), log10(as.numeric(as.character(Concentration))) < input$concInput1)
+     }
     if (input$cpSelect1 != "") {
       filtered <- subset(csvs(1), Cp > input$cpSelect1)
     }
@@ -337,8 +329,8 @@ server <- function(input, output, session) {
   
   datafile2 <- reactive({
     filtered <- csvs(2)
-    if (input$colorInput2 != "") {
-      filtered <- subset(csvs(2), Color %in% input$colorInput2)
+    if (input$concInput2 != 10 & sum(!is.na(csvs(2)$Concentration)>0)) {
+      filtered <- subset(csvs(2), log10(as.numeric(as.character(Concentration))) < input$concInput2)
     }
     if (input$cpSelect2 != "") {
       filtered <- subset(csvs(2), Cp > input$cpSelect2)
@@ -351,8 +343,8 @@ server <- function(input, output, session) {
   
   datafile3 <- reactive({
     filtered <- csvs(3)
-    if (input$colorInput3 != "") {
-      filtered <- subset(csvs(3), Color %in% input$colorInput3)
+    if (input$concInput3 != 10 & sum(!is.na(csvs(3)$Concentration)>0)) {
+      filtered <- subset(csvs(3), log10(as.numeric(as.character(Concentration))) < input$concInput3)
     }
     if (input$cpSelect3 != "") {
       filtered <- subset(csvs(3), Cp > input$cpSelect3)
@@ -365,8 +357,8 @@ server <- function(input, output, session) {
   
   datafile4 <- reactive({
     filtered <- csvs(4)
-    if (input$colorInput4 != "") {
-      filtered <- subset(csvs(4), Color %in% input$colorInput4)
+    if (input$concInput4 != 10 & sum(!is.na(csvs(4)$Concentration)>0)) {
+      filtered <- subset(csvs(4), log10(as.numeric(as.character(Concentration))) < input$concInput4)
     }
     if (input$cpSelect4 != "") {
       filtered <- subset(csvs(4), Cp > input$cpSelect4)

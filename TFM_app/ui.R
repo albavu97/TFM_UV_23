@@ -160,7 +160,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput1', '', "")
+                      numericInput('concInput1',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
@@ -213,7 +213,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput2', '', "")
+                      numericInput('concInput2',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
@@ -264,7 +264,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput3', '', "")
+                      numericInput('concInput3',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
@@ -316,7 +316,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput4', '', "")
+                      numericInput('concInput4',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
