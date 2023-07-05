@@ -250,11 +250,11 @@ ggplot(data = params$imported$boxplot) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+      scale_fill_gradientn(colours=c("grey", "green", "red"),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c(0,25,40),
                            limits=c(0,40))+
       labs(
-        subtitle = "Cp or log10(Conc) values",
+        subtitle = "Cp values",
         x = "Col",
         y = "Row"
       ) +
@@ -280,11 +280,11 @@ ggplot(data = params$imported$boxplot2) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+      scale_fill_gradientn(colours= c("grey", "green", "red"),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c(0,25,40),
                            limits=c(0,40))+
       labs(
-        subtitle = "Cp or log10(Conc) values",
+        subtitle = "Cp values",
         x = "Col",
         y = "Row"
       ) +
@@ -310,11 +310,11 @@ ggplot(data = params$imported$boxplot3) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+      scale_fill_gradientn(colours= c("grey", "green", "red"),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c(0,25,40),
                            limits=c(0,40))+
       labs(
-        subtitle = "Cp or log10(Conc) values",
+        subtitle = "Cp values",
         x = "Col",
         y = "Row"
       ) +
@@ -340,11 +340,11 @@ ggplot(data = params$imported$boxplot4) +
         expand = expansion(mult = c(0.01, 0.01)),
         trans = reverse_trans()
       ) +
-      scale_fill_gradientn(colours=rainbow(6),na.value = "transparent",
-                           breaks=c(0,25,40),labels=c("Minimum",25,"Maximum"),
+      scale_fill_gradientn(colours= c("grey", "green", "red"),na.value = "transparent",
+                           breaks=c(0,25,40),labels=c(0,25,40),
                            limits=c(0,40))+
       labs(
-        subtitle = "Cp or log10(Conc) values",
+        subtitle = "Cp values",
         x = "Col",
         y = "Row"
       ) +

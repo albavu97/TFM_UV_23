@@ -521,7 +521,7 @@ server <- function(input, output, session) {
         by.y = "Pos",
         all.x = TRUE
       )
-    merged_df$Cp[is.na(merged_df$Cp)] <- 0
+    merged_df$Cp[is.na(merged_df$Cp)] <- 100
     merged_df <- merged_df[c("col1", "Cp")]
     specific_order = c(
       "A1",
@@ -794,6 +794,24 @@ server <- function(input, output, session) {
   #Continous scale will help later on with scaling.
   require(tidyverse)
   
+  cpmax1 <- reactive({input$maxCp1})
+  cpmax2 <- reactive({input$maxCp2})
+  cpmax3 <- reactive({input$maxCp3})
+  cpmax4 <- reactive({input$maxCp4})
+  
+  cpmax <- function(number){
+    if (number == 1) {
+      variable = cpmax1()
+    } else if (number == "2") {
+      variable = cpmax2()
+    } else if (number == 3) {
+      variable = cpmax3()
+    } else if (number == 4) {
+      variable = cpmax4()
+    }
+
+  }
+  
   ldf1 <- function(number) {
     df1(number) %>%
       mutate(row = 1:8) %>%
@@ -814,7 +832,7 @@ server <- function(input, output, session) {
     }
     
     if (variable == "Cp") {  
-      c(0, 25, 40)}
+      c(0, cpmax(number)/2, cpmax(number))}
     else{
       c(0,5,10)
     }
@@ -832,9 +850,9 @@ server <- function(input, output, session) {
     }
     
     if (variable == "Cp") {  
-      c("Minimum", 25, "Maximum")}
+      c(0, cpmax(number)/2, cpmax(number))}
     else{
-      c("Minimum", 5, "Maximum")
+      c(0, 5, 10)
     }
   }
   
@@ -850,14 +868,14 @@ server <- function(input, output, session) {
     }
     
     if (variable == "Cp") {  
-      c(0, 40)}
+      c(0, cpmax(number))}
     else{
       c(0, 10)
     }
   }
   
   
-  
+plotWell1 <- reactive({  
   output$plot1 <- 
     renderPlot({
       # check input data and rise an error message if none
@@ -878,8 +896,8 @@ server <- function(input, output, session) {
           trans = reverse_trans()
         ) +
         scale_fill_gradientn(
-          colours = rainbow(6),
-          na.value = "white",
+          colours = c("grey", "green", "red"),
+          na.value = "transparent",
           breaks = breaksUpdate(1),
           labels = labelsUpdate(1),
           limits = limitsUpdate(1)
@@ -892,6 +910,14 @@ server <- function(input, output, session) {
         ) +
         theme_bw()
     })
+})
+
+observeEvent(ignoreNULL = TRUE,
+             eventExpr = {
+               input$maxCp1
+             },
+             handlerExpr = {
+               plotWell1()})
 
 
 output$plot2 <- renderPlot({
@@ -913,7 +939,7 @@ output$plot2 <- renderPlot({
       trans = reverse_trans()
     ) +
     scale_fill_gradientn(
-      colours = rainbow(6),
+      colours = c("grey", "green", "red"),
       na.value = "transparent",
       breaks = breaksUpdate(2),
       labels = labelsUpdate(2),
@@ -947,8 +973,7 @@ output$plot3 <- renderPlot({
       trans = reverse_trans()
     ) +
     scale_fill_gradientn(
-      colours = topo.colors(6)
-      ,
+      colours = c("grey", "green", "red"),
       na.value = "transparent",
       breaks = breaksUpdate(3),
       labels = labelsUpdate(3),
@@ -982,7 +1007,7 @@ output$plot4 <- renderPlot({
       trans = reverse_trans()
     ) +
     scale_fill_gradientn(
-      colours = topo.colors(6),
+      colours = c("grey", "green", "red"),
       na.value = "transparent",
       breaks = breaksUpdate(4),
       labels = labelsUpdate(4),
