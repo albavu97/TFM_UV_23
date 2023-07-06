@@ -6,8 +6,6 @@ output:
 header-includes:
   \usepackage{fancyhdr}
   \usepackage{graphicx}
-# params begin as NA and then are overwritten by the object passed in as params in the render function
-# inside the donloadHandler function in the server function of the app.
 params:
   imported: NA
 ---
