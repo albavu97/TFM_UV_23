@@ -160,7 +160,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput1', '', "")
+                      numericInput('concInput1',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
@@ -213,7 +213,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput2', '', "")
+                      numericInput('concInput2',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
@@ -264,7 +264,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput3', '', "")
+                      numericInput('concInput3',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
@@ -316,7 +316,7 @@ ui <- dashboardPage(
                       solidHeader = TRUE,
                       background = "orange",
                       status = "warning",
-                      selectInput('colorInput4', '', "")
+                      numericInput('concInput4',"Concentration (log10)",10)
                     ),
                     box(
                       width = 3,
@@ -369,6 +369,8 @@ ui <- dashboardPage(
                          label = "Select value to plot",
                          choices = c("Cp" = "Cp", "Concentration" = "Conc")
                        ),
+                       sliderInput("maxCp1","Seleccionar valor máximo filtrado de Cp:",
+                                   min = 0,max = 45,value = 40)
                      ),
                      
                      column(width = 8,
@@ -384,6 +386,8 @@ ui <- dashboardPage(
                          label = "Select value to plot",
                          choices = c("Cp" = "Cp", "Concentration" = "Conc")
                        ),
+                       sliderInput("maxCp2","Seleccionar valor máximo filtrado de Cp:",
+                                   min = 0,max = 45,value = 40)
                      ),
                      #End column inputs
                      column(width = 8,
@@ -400,6 +404,8 @@ ui <- dashboardPage(
                          label = "Select value to plot",
                          choices = c("Cp" = "Cp", "Concentration" = "Conc")
                        ),
+                       sliderInput("maxCp3","Seleccionar valor máximo filtrado de Cp:",
+                                   min = 0,max = 45,value = 40)
                      ),
                      column(width = 8,
                             plotOutput("plot3"), )
@@ -413,6 +419,8 @@ ui <- dashboardPage(
                          label = "Select value to plot",
                          choices = c("Cp" = "Cp", "Concentration" = "Conc")
                        ),
+                       sliderInput("maxCp4","Seleccionar valor máximo filtrado de Cp:",
+                                   min = 0,max = 45,value = 40)
                      ),
                      #End column inputs
                      column(width = 8,
