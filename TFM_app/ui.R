@@ -16,6 +16,8 @@ library(plotly)
 # ----------------------------------
 # ui.R
 # Description: File with all elements for UI
+# Author: Alba Vallejo Urruchi
+# Final thesis of Bioinformatics Master UV 21-23
 # ----------------------------------
 
 # ----------------------------------

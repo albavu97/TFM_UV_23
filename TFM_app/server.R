@@ -8,6 +8,8 @@ library(ggplate)
 # ----------------------------------
 # app.R
 # Server: Input controller and outputs of ui.R
+# Author: Alba Vallejo Urruchi
+# Final thesis of Bioinformatics Master UV 21-23
 # ----------------------------------
 
 
@@ -1498,9 +1500,7 @@ output$report_gen <- downloadHandler(
     # create a named reactive values to pass to to Rmd template.
     pass_params <- list(imported = my_vals)
     
-    # knit the document, passing in the `pass_params` list, and evaluate it in a
-    # child of the global environment (this isolates the code in the document
-    # from the code in the app).
+    # knit the document, passing in the `pass_params` list
     rmarkdown::render(
       temp_report,
       output_file = file,
